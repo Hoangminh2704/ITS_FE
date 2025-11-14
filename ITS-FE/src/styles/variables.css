@@ -1,0 +1,77 @@
+:root {
+  /* Primary Colors */
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+
+  /* Background Colors */
+  --background-light: #f7fafc;
+  --background-dark: #1a202c;
+  --sidebar-dark: #111827;
+
+  /* Border Colors */
+  --border-light: #e2e8f0;
+  --border-dark: #4a5568;
+
+  /* Text Colors */
+  --text-light-primary: #1a202c;
+  --text-light-secondary: #4a5568;
+  --text-dark-primary: #f7fafc;
+  --text-dark-secondary: #a0aec0;
+
+  /* Neutral Colors */
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+
+  /* Status Colors */
+  --red-500: #ef4444;
+  --red-700: #b91c1c;
+
+  /* Role Badge Colors */
+  --purple-100: #ede9fe;
+  --purple-300: #c4b5fd;
+  --purple-800: #6d28d9;
+  --purple-900: #4c1d95;
+
+  --blue-100: #dbeafe;
+  --blue-300: #93c5fd;
+  --blue-800: #1d4ed8;
+  --blue-900: #1e3a8a;
+
+  --green-100: #dcfce7;
+  --green-300: #86efac;
+  --green-800: #16a34a;
+  --green-900: #14532d;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.2s ease;
+  --transition-slow: 0.3s ease;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
