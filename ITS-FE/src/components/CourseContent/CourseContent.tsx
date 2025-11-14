@@ -1,68 +1,16 @@
 import React from "react";
+import { useParams } from "react-router-dom";
+import { InstructorHeader } from "../InstructorHeader/InstructorHeader";
 import "./CourseContent.css";
-// LƯU Ý: Bạn cần thêm 2 dòng link này vào file public/index.html
-// để load font chữ và icon (Material Symbols Outlined):
-// <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-// <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
 
 const CourseContentManagement: React.FC = () => {
-  // CSS được chuyển đổi từ Tailwind và nhúng trực tiếp
+  const { courseId } = useParams<{ courseId: string }>();
 
   return (
     <React.Fragment>
-      {/* Thêm class 'course-mgmt-body' vào đây hoặc vào <body> chung của app */}
       <div className="course-mgmt-body">
         <div className="course-mgmt-layout">
-          <header className="course-mgmt-header">
-            <div className="header-left">
-              <div className="header-logo">
-                <div className="logo-icon-bg">
-                  <span className="material-symbols-outlined">school</span>
-                </div>
-                <span className="logo-title">ITS</span>
-              </div>
-              <div className="header-divider"></div>
-              <div>
-                <h1 className="header-title">Course Content Management</h1>
-              </div>
-            </div>
-            <div className="header-right">
-              <nav className="header-nav">
-                <a className="nav-link" href="#">
-                  Dashboard
-                </a>
-                <a className="nav-link nav-link-active" href="#">
-                  Courses
-                </a>
-                <a className="nav-link" href="#">
-                  Quizzes
-                </a>
-                <a className="nav-link" href="#">
-                  Students
-                </a>
-                <a className="nav-link" href="#">
-                  Analytics
-                </a>
-              </nav>
-              <div className="header-right">
-                <button className="notification-btn">
-                  <span className="material-symbols-outlined">
-                    notifications
-                  </span>
-                  <span className="notification-dot"></span>
-                </button>
-                <img
-                  alt="User avatar"
-                  className="avatar"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMO4bs8VNo6f9Ip-mvYk19-J3-dfa231W6K6yH3lfd-8b1VmoByX69SroG2_Ye71OD9DaFvr32nU2o-DhiX_8sZSSLJUFj3YTd8gEqeNsb5AuPArTfOUXQ36foGzIDnDMj2Ud8ngZx_lX9foSvq8VLddVY7Ko1RKLxDcl9eWQLrtgdTGBePdp_2QkWt0M5Y5YPD-mLmYswRIL_KWe07XqdIxH8BtYPd-gWdXwNjPV4L_q0q4mddy-YcrsT3E12Y86zvxE_ehuHi1jV"
-                  onError={(e) =>
-                    (e.currentTarget.src =
-                      "https://placehold.co/36x36/4361EE/FFFFFF?text=A")
-                  }
-                />
-              </div>
-            </div>
-          </header>
+          <InstructorHeader courseId={courseId} activeTab="Courses" />
 
           <main className="course-mgmt-main">
             <aside className="course-structure-aside">
