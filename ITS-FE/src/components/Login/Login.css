@@ -1,0 +1,286 @@
+:root {
+  --primary-color: #3346c8;
+  --background-light: #f8f9fa;
+  --background-dark: #121212; /* Hỗ trợ dark mode (nếu cần) */
+  --card-light: #ffffff;
+  --card-dark: #1e1e1e; /* Hỗ trợ dark mode (nếu cần) */
+  --text-primary-light: #1f2937;
+  --text-secondary-light: #6b7280;
+  --border-light: #d1d5db;
+  --input-bg-light: #f9fafb;
+}
+
+/* Import variables from global styles */
+@import "../../styles/variables.css";
+
+/* Kiểu dáng chung */
+/* Chúng ta áp dụng font-family cho .login-container thay vì body 
+       để tránh ảnh hưởng toàn cục khi component này được dùng ở nơi khác */
+.login-container {
+  font-family: "Public Sans", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary) 0%, #1e40af 100%);
+  padding: var(--spacing-lg);
+  box-sizing: border-box; /* Thêm để tính toán padding chuẩn */
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px; /* 640px */
+  background-color: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-xl); /* 40px */
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* Header */
+.login-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem; /* 24px */
+}
+
+.logo-icon {
+  display: inline-flex;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem; /* 16px */
+  border-radius: 0.5rem; /* 8px */
+  margin-bottom: 1rem; /* 16px */
+}
+
+.logo-title {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 700;
+  color: var(--text-primary-light);
+  margin: 0;
+}
+
+.logo-subtitle {
+  font-size: 0.875rem; /* 14px */
+  color: var(--text-secondary-light);
+  margin-top: 0.25rem; /* 4px */
+}
+
+/* Welcome Text */
+.welcome-header {
+  margin-bottom: 2rem; /* 32px */
+}
+
+.welcome-title {
+  font-size: 1.875rem; /* 30px */
+  font-weight: 700;
+  color: var(--text-primary-light);
+  margin: 0;
+}
+
+.welcome-subtitle {
+  color: var(--text-secondary-light);
+  margin-top: 0.5rem; /* 8px */
+}
+
+/* Form */
+.login-form {
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 1.5rem; /* 24px */
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+  color: var(--text-primary-light);
+  margin-bottom: 0.5rem; /* 8px */
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.75rem; /* 12px */
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary-light);
+  font-size: 20px;
+  /* Thêm z-index để đảm bảo icon nổi lên trên input */
+  z-index: 1;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 2.5rem 0.75rem 2.75rem; /* 12px 40px 12px 44px */
+  border-radius: 0.5rem; /* 8px */
+  border: 1px solid var(--border-light);
+  background-color: var(--input-bg-light);
+  color: var(--text-primary-light);
+  box-sizing: border-box; /* Đảm bảo padding không làm vỡ layout */
+  position: relative; /* Thêm để z-index hoạt động */
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(51, 70, 200, 0.2);
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.75rem; /* 12px */
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary-light);
+  padding: 0;
+  z-index: 1; /* Đảm bảo nút nổi lên trên input */
+}
+
+/* Remember Me */
+.remember-me {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem; /* 24px */
+}
+
+.checkbox {
+  height: 1rem;
+  width: 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--border-light);
+  color: var(--primary-color);
+  /* Thêm thuộc tính để căn chỉnh tốt hơn */
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.checkbox:checked {
+  background-color: var(--primary-color);
+}
+
+.remember-label {
+  margin-left: 0.5rem; /* 8px */
+  font-size: 0.875rem; /* 14px */
+  color: var(--text-primary-light);
+}
+
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0.5rem; /* 8px */
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+  opacity: 0.9;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Forgot Password */
+.forgot-password {
+  margin-top: 1.5rem; /* 24px */
+}
+
+.forgot-password a {
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+}
+
+.demo-info {
+  background-color: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.demo-info p {
+  margin: 0 0 0.75rem 0;
+  font-weight: 600;
+  color: #0c4a6e;
+}
+
+.demo-account {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background-color: white;
+  border-radius: 0.375rem;
+}
+
+.demo-account:last-child {
+  margin-bottom: 0;
+}
+
+.demo-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  min-width: 80px;
+  justify-content: center;
+}
+
+.demo-admin {
+  background-color: #ede9fe;
+  color: #6d28d9;
+}
+
+.demo-instructor {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.demo-student {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.demo-account span:last-child {
+  color: #475569;
+  font-family: "Courier New", monospace;
+  font-size: 0.8rem;
+}
+
+.error-message {
+  background-color: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  color: #991b1b;
+  font-size: 0.875rem;
+  text-align: center;
+}
