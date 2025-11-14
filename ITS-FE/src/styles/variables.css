@@ -74,4 +74,17 @@
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  --primary-color: #6366f1;
+  --bg-light: #f8f9fa;
+  --bg-dark: #111827;
+  --sidebar-bg: #1f2937;
+  --card-light: #ffffff;
+  --card-dark: #1f2937; /* gray-800 from original */
+  --text-light-primary: #111827; /* gray-900 */
+  --text-light-secondary: #6b7280; /* gray-500 */
+  --text-dark-primary: #f9fafb; /* gray-100 */
+  --text-dark-secondary: #9ca3af; /* gray-400 */
+  --border-light: #e5e7eb; /* gray-200 */
+  --border-dark: #374151; /* gray-700 */
 }
