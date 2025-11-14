@@ -1,6 +1,7 @@
 import React from "react";
-import type { Course } from "../../Data/coursesData"; // Import kiểu dữ liệu
-import "./CourseCard.css"; // Import CSS cho card
+import { useNavigate } from "react-router-dom";
+import type { Course } from "../../Data/coursesData";
+import "./CourseCard.css";
 
 // Định nghĩa props cho component
 interface CourseCardProps {
@@ -8,6 +9,12 @@ interface CourseCardProps {
 }
 
 const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
+  const navigate = useNavigate();
+
+  const handleManageCourse = () => {
+    navigate(`/instructor/course/${course.id}`);
+  };
+
   return (
     <div className="course-card">
       <img
@@ -31,7 +38,9 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
             <span>{course.duration}</span>
           </div>
         </div>
-        <button className="manage-course-btn">Manage Course</button>
+        <button className="manage-course-btn" onClick={handleManageCourse}>
+          Manage Course
+        </button>
       </div>
     </div>
   );
