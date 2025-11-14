@@ -17,6 +17,9 @@ export const InstructorHeader: React.FC<InstructorHeaderProps> = ({
     e.preventDefault();
 
     switch (tab) {
+      case "Dashboard":
+        navigate("/instructor");
+        break;
       case "Courses":
         navigate(`/instructor/course/${courseId}`);
         break;

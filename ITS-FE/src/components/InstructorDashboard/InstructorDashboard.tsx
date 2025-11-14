@@ -1,9 +1,18 @@
 import React from "react";
+import { useAuth } from "../../contexts/AuthContext";
 import CourseCard from "../CourseCard/CourseCard";
 import { courseData } from "../../Data/coursesData";
 import "./InstructorDashboard.css";
 
 const InstructorDashboard: React.FC = () => {
+  const { logout, user } = useAuth();
+
+  const handleLogout = () => {
+    if (window.confirm("Are you sure you want to logout?")) {
+      logout();
+    }
+  };
+
   return (
     <React.Fragment>
       <div className="dashboard-layout">
@@ -37,7 +46,7 @@ const InstructorDashboard: React.FC = () => {
             <div className="profile-container">
               <div className="profile-info">
                 <img
-                  alt="Profile picture of John Anderson"
+                  alt={`Profile picture of ${user?.name}`}
                   className="profile-avatar"
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiKpTfV4aUSlT5YTy0u-_YBXfV-0pltqX62AEL1YW1PbSy_SV9LwdSAoxUCOBkHAm4iLT9aCVFkzuNJHtFFA52l_a4OPYc4CejqDOq1kmtEz9d6mNRmJTNlkpCKFlHCBTWUFrrXMWRJpq8o-Xcfb9Gil8ZXSJHAj39UCN4S35mE3kjpMmq3VC2nvX8BssrsovsyEGIckkVbvhwioHMytknDXzjdi9f4N0fP-WImA5uk9ebD9Vg47RMANcS1gQNduvMMYuQ_y6HiqJN"
                   onError={(e) =>
@@ -46,14 +55,20 @@ const InstructorDashboard: React.FC = () => {
                   }
                 />
                 <div>
-                  <p className="profile-name">John Anderson</p>
-                  <p className="profile-role">Instructor</p>
+                  <p className="profile-name">
+                    {user?.name || "John Anderson"}
+                  </p>
+                  <p className="profile-role">{user?.role || "Instructor"}</p>
                 </div>
               </div>
               <button className="profile-options-btn">
                 <span className="material-icons">more_vert</span>
               </button>
             </div>
+            <button className="logout-btn" onClick={handleLogout}>
+              <span className="material-icons">logout</span>
+              <span>Logout</span>
+            </button>
           </div>
         </aside>
 
