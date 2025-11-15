@@ -1,3 +1,5 @@
+@import "../../styles/variables.css";
+
 /* Kiểu dáng cho Course Card */
 .course-card {
   background-color: var(--card-light);
