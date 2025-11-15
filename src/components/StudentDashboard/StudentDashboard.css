@@ -1,0 +1,36 @@
+@import "../../styles/variables.css";
+
+.student-dashboard-layout {
+  font-family: "Inter", sans-serif;
+  background-color: var(--std-background-light);
+  color: var(--std-text-light);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  height: 100vh;
+}
+
+.dark .student-dashboard-layout {
+  background-color: var(--std-background-dark);
+  color: var(--std-text-dark);
+}
+
+/* ...existing sidebar, header, and content styles... */
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .course-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .course-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

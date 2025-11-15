@@ -1,0 +1,130 @@
+:root {
+  /* Primary Colors */
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+
+  /* Background Colors */
+  --background-light: #f7fafc;
+  --background-dark: #1a202c;
+  --sidebar-dark: #111827;
+
+  /* Border Colors */
+  --border-light: #e2e8f0;
+  --border-dark: #4a5568;
+
+  /* Text Colors */
+  --text-light-primary: #1a202c;
+  --text-light-secondary: #4a5568;
+  --text-dark-primary: #f7fafc;
+  --text-dark-secondary: #a0aec0;
+
+  /* Neutral Colors */
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+
+  /* Status Colors */
+  --red-500: #ef4444;
+  --red-700: #b91c1c;
+
+  /* Role Badge Colors */
+  --purple-100: #ede9fe;
+  --purple-300: #c4b5fd;
+  --purple-800: #6d28d9;
+  --purple-900: #4c1d95;
+
+  --blue-100: #dbeafe;
+  --blue-300: #93c5fd;
+  --blue-800: #1d4ed8;
+  --blue-900: #1e3a8a;
+
+  --green-100: #dcfce7;
+  --green-300: #86efac;
+  --green-800: #16a34a;
+  --green-900: #14532d;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.2s ease;
+  --transition-slow: 0.3s ease;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  --primary-color: #6366f1;
+  --bg-light: #f8f9fa;
+  --bg-dark: #111827;
+  --sidebar-bg: #1f2937;
+  --card-light: #ffffff;
+  --card-dark: #1f2937; /* gray-800 from original */
+  --text-light-primary: #111827; /* gray-900 */
+  --text-light-secondary: #6b7280; /* gray-500 */
+  --text-dark-primary: #f9fafb; /* gray-100 */
+  --text-dark-secondary: #9ca3af; /* gray-400 */
+  --border-light: #e5e7eb; /* gray-200 */
+  --border-dark: #374151; /* gray-700 */
+
+  --std-primary: #4f46e5;
+  --std-background-light: #f8f9fa;
+  --std-background-dark: #18181b;
+  --std-card-light: #ffffff;
+  --std-card-dark: #27272a;
+  --std-text-light: #18181b;
+  --std-text-dark: #e4e4e7;
+  --std-text-muted-light: #6b7280;
+  --std-text-muted-dark: #a1a1aa;
+  --std-border-light: #e5e7eb;
+  --std-border-dark: #3f3f46;
+
+  /* Tag Colors (Light Mode) */
+  --std-tag-blue-bg: #dbeafe;
+  --std-tag-blue-text: #2563eb;
+  --std-tag-purple-bg: #e9d5ff;
+  --std-tag-purple-text: #9333ea;
+  --std-tag-orange-bg: #ffedd5;
+  --std-tag-orange-text: #f97316;
+  --std-tag-green-bg: #dcfce7;
+  --std-tag-green-text: #22c55e;
+  --std-tag-pink-bg: #fce7f3;
+  --std-tag-pink-text: #db2777;
+  --std-tag-cyan-bg: #cffafe;
+  --std-tag-cyan-text: #06b6d4;
+
+  /* Tag Colors (Dark Mode) */
+  --std-tag-dark-blue-bg: rgba(37, 99, 235, 0.5);
+  --std-tag-dark-blue-text: #93c5fd;
+  --std-tag-dark-purple-bg: rgba(147, 51, 234, 0.5);
+  --std-tag-dark-purple-text: #c4b5fd;
+  --std-tag-dark-orange-bg: rgba(249, 115, 22, 0.5);
+  --std-tag-dark-orange-text: #fdba74;
+  --std-tag-dark-green-bg: rgba(34, 197, 94, 0.5);
+  --std-tag-dark-green-text: #86efac;
+  --std-tag-dark-pink-bg: rgba(219, 39, 119, 0.5);
+  --std-tag-dark-pink-text: #f9a8d4;
+  --std-tag-dark-cyan-bg: rgba(6, 182, 212, 0.5);
+  --std-tag-dark-cyan-text: #67e8f9;
+}
