@@ -32,7 +32,6 @@ const Login: React.FC = () => {
   return (
     <div className="login-container">
       <div className="login-card">
-        {/* Header with Logo */}
         <div className="login-header">
           <div className="logo-icon">
             <span
@@ -46,7 +45,6 @@ const Login: React.FC = () => {
           <p className="logo-subtitle">Smart learning platform</p>
         </div>
 
-        {/* Welcome Text */}
         <div className="welcome-header">
           <h2 className="welcome-title">Login to ITS</h2>
           <p className="welcome-subtitle">
@@ -54,7 +52,6 @@ const Login: React.FC = () => {
           </p>
         </div>
 
-        {/* Demo Accounts Info */}
         <div className="demo-info">
           <p>
             <strong>Demo Accounts:</strong>
@@ -73,12 +70,9 @@ const Login: React.FC = () => {
           </div>
         </div>
 
-        {/* Error Message */}
         {error && <div className="error-message">{error}</div>}
 
-        {/* Login Form */}
         <form className="login-form" onSubmit={handleSubmit}>
-          {/* Email Field */}
           <div className="form-group">
             <label className="form-label" htmlFor="email">
               Email
@@ -100,7 +94,6 @@ const Login: React.FC = () => {
             </div>
           </div>
 
-          {/* Password Field */}
           <div className="form-group">
             <label className="form-label" htmlFor="password">
               Password
@@ -131,7 +124,6 @@ const Login: React.FC = () => {
             </div>
           </div>
 
-          {/* Remember Me */}
           <div className="remember-me">
             <input
               className="checkbox"
@@ -144,7 +136,6 @@ const Login: React.FC = () => {
             </label>
           </div>
 
-          {/* Submit Button */}
           <div>
             <button className="submit-btn" type="submit" disabled={loading}>
               {loading ? "Logging in..." : "Login"}

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import type { Course } from "../../types/course";
 import "./CourseCard.css";
 
-// Định nghĩa props cho component
 interface CourseCardProps {
   course: Course;
 }

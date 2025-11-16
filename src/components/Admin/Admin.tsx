@@ -2,15 +2,9 @@ import React from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import "./Admin.css";
 
-// LƯU Ý: Bạn cần thêm 2 dòng link này vào file public/index.html
-// để load font chữ và icon:
-// <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
-// <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-
 const Admin: React.FC = () => {
   const { logout, user } = useAuth();
 
-  // Dữ liệu mẫu (mock data) cho bảng
   const users = [
     {
       id: "#12345",
@@ -93,7 +87,6 @@ const Admin: React.FC = () => {
 
   return (
     <div className="admin-layout">
-      {/* Sidebar */}
       <aside className="sidebar">
         <div className="sidebar-header">
           <div className="sidebar-logo">
@@ -151,7 +144,6 @@ const Admin: React.FC = () => {
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="main-content">
         <header className="content-header">
           <div>

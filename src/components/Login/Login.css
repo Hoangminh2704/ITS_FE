@@ -1,18 +1,16 @@
 @import "../../styles/variables.css";
+
 :root {
   --primary-color: #3346c8;
   --background-light: #f8f9fa;
-  --background-dark: #121212; /* Hỗ trợ dark mode (nếu cần) */
+  --background-dark: #121212;
   --card-light: #ffffff;
-  --card-dark: #1e1e1e; /* Hỗ trợ dark mode (nếu cần) */
+  --card-dark: #1e1e1e;
   --text-primary-light: #1f2937;
   --text-secondary-light: #6b7280;
   --border-light: #d1d5db;
   --input-bg-light: #f9fafb;
 }
-
-/* Import variables from global styles */
-@import "../../styles/variables.css";
 
 .login-container {
   font-family: "Public Sans", sans-serif;
@@ -26,53 +24,51 @@
 
 .login-card {
   width: 100%;
-  max-width: 450px; /* 640px */
+  max-width: 450px;
   background-color: white;
   border-radius: 1rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  padding: 2rem; /* 40px */
+  padding: 2rem;
   text-align: center;
   box-sizing: border-box;
 }
 
-/* Header */
 .login-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 1.5rem; /* 24px */
+  margin-bottom: 1.5rem;
 }
 
 .logo-icon {
   display: inline-flex;
   background-color: var(--primary-color);
   color: white;
-  padding: 1rem; /* 16px */
-  border-radius: 0.5rem; /* 8px */
-  margin-bottom: 1rem; /* 16px */
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .logo-title {
-  font-size: 1.5rem; /* 24px */
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-primary-light);
   margin: 0;
 }
 
 .logo-subtitle {
-  font-size: 0.875rem; /* 14px */
+  font-size: 0.875rem;
   color: var(--text-secondary-light);
-  margin-top: 0.25rem; /* 4px */
+  margin-top: 0.25rem;
 }
 
-/* Welcome Text */
 .welcome-header {
-  margin-bottom: 2rem; /* 32px */
+  margin-bottom: 2rem;
 }
 
 .welcome-title {
-  font-size: 1.875rem; /* 30px */
+  font-size: 1.875rem;
   font-weight: 700;
   color: var(--text-primary-light);
   margin: 0;
@@ -80,24 +76,23 @@
 
 .welcome-subtitle {
   color: var(--text-secondary-light);
-  margin-top: 0.5rem; /* 8px */
+  margin-top: 0.5rem;
 }
 
-/* Form */
 .login-form {
   text-align: left;
 }
 
 .form-group {
-  margin-bottom: 1.5rem; /* 24px */
+  margin-bottom: 1.5rem;
 }
 
 .form-label {
   display: block;
-  font-size: 0.875rem; /* 14px */
+  font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-primary-light);
-  margin-bottom: 0.5rem; /* 8px */
+  margin-bottom: 0.5rem;
 }
 
 .input-wrapper {
@@ -118,18 +113,18 @@
 
 .form-input {
   width: 100%;
-  padding: 0.75rem 1rem 0.75rem 3rem; /* Increased left padding for icon */
+  padding: 0.75rem 1rem 0.75rem 3rem;
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
   font-size: 0.875rem;
   transition: all 0.2s;
   background-color: white;
-  box-sizing: border-box; /* Đảm bảo padding được tính đúng */
+  box-sizing: border-box;
 }
 
 .login-form .form-input,
 .form-group .form-input {
-  padding-left: 3rem !important; /* 48px, hoặc dùng 2.5rem cho 40px */
+  padding-left: 3rem !important;
 }
 
 .form-input:focus {
@@ -166,11 +161,10 @@
   font-size: 1.25rem;
 }
 
-/* Remember Me */
 .remember-me {
   display: flex;
   align-items: center;
-  margin-bottom: 1.5rem; /* 24px */
+  margin-bottom: 1.5rem;
 }
 
 .checkbox {
@@ -179,7 +173,6 @@
   border-radius: 0.25rem;
   border: 1px solid var(--border-light);
   color: var(--primary-color);
-  /* Thêm thuộc tính để căn chỉnh tốt hơn */
   margin: 0;
   flex-shrink: 0;
 }
@@ -189,12 +182,11 @@
 }
 
 .remember-label {
-  margin-left: 0.5rem; /* 8px */
-  font-size: 0.875rem; /* 14px */
+  margin-left: 0.5rem;
+  font-size: 0.875rem;
   color: var(--text-primary-light);
 }
 
-/* Submit Button */
 .submit-btn {
   width: 100%;
   background-color: var(--primary-color);
@@ -202,7 +194,7 @@
   font-weight: 700;
   padding: 0.75rem 1rem;
   border: none;
-  border-radius: 0.5rem; /* 8px */
+  border-radius: 0.5rem;
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -216,13 +208,12 @@
   cursor: not-allowed;
 }
 
-/* Forgot Password */
 .forgot-password {
-  margin-top: 1.5rem; /* 24px */
+  margin-top: 1.5rem;
 }
 
 .forgot-password a {
-  font-size: 0.875rem; /* 14px */
+  font-size: 0.875rem;
   font-weight: 500;
   color: var(--primary-color);
   text-decoration: none;

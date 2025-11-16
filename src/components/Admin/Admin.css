@@ -1,14 +1,11 @@
-/* Import variables from global styles */
 @import "../../styles/variables.css";
 
-/* ===== LAYOUT CHÍNH ===== */
 .admin-layout {
   display: flex;
   height: 100vh;
   background-color: var(--background-light);
 }
 
-/* ===== SIDEBAR ===== */
 .sidebar {
   width: 16rem;
   flex-shrink: 0;
@@ -123,7 +120,6 @@
   font-size: 0.75rem;
 }
 
-/* ===== MAIN CONTENT ===== */
 .main-content {
   flex-grow: 1;
   overflow-y: auto;
@@ -176,7 +172,6 @@
   font-size: 1.25rem;
 }
 
-/* ===== CONTENT BODY ===== */
 .content-body {
   padding: 1.5rem;
 }
@@ -188,7 +183,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* ===== TABLE TOOLBAR ===== */
 .table-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -268,7 +262,6 @@
   font-size: 1rem;
 }
 
-/* ===== TABLE ===== */
 .table-wrapper {
   overflow-x: auto;
 }
@@ -351,7 +344,6 @@
   color: var(--text-light-primary);
 }
 
-/* ===== ROLE BADGES ===== */
 .role-badge {
   display: inline-flex;
   align-items: center;
@@ -381,7 +373,6 @@
   color: var(--green-800);
 }
 
-/* ===== ACTION BUTTONS ===== */
 .action-buttons {
   display: flex;
   align-items: center;
@@ -421,7 +412,6 @@
   font-size: 1.25rem;
 }
 
-/* ===== PAGINATION ===== */
 .table-pagination {
   display: flex;
   align-items: center;
@@ -507,7 +497,6 @@
   font-size: 1.25rem;
 }
 
-/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .table-toolbar {
     flex-direction: column;
