@@ -124,7 +124,12 @@
   font-size: 0.875rem;
   transition: all 0.2s;
   background-color: white;
-  padding-left: 40px;
+  box-sizing: border-box; /* Đảm bảo padding được tính đúng */
+}
+
+.login-form .form-input,
+.form-group .form-input {
+  padding-left: 3rem !important; /* 48px, hoặc dùng 2.5rem cho 40px */
 }
 
 .form-input:focus {
