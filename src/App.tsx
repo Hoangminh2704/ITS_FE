@@ -7,6 +7,7 @@ import QuizContentPage from "./pages/QuizContentPage/QuizContentPage";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import InstructorDashboard from "./components/InstructorDashboard/InstructorDashboard";
+import StudentDashboard from "./components/StudentDashboard/StudentDashboard";
 
 function App() {
   return (
@@ -43,6 +44,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <QuizContentPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student"
+            element={
+              <ProtectedRoute>
+                <StudentDashboard />
               </ProtectedRoute>
             }
           />

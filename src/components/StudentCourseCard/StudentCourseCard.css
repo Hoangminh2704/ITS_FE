@@ -52,7 +52,6 @@
   color: var(--std-text-muted-dark);
 }
 
-/* Tag Colors */
 .tag-blue {
   background-color: var(--std-tag-blue-bg);
   color: var(--std-tag-blue-text);
