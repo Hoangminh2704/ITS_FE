@@ -1,0 +1,31 @@
+# VITE GIT IGNORE TEMPLATE
+# Node modules
+/node_modules
+
+# Build output
+/dist
+/dist-ssr
+
+# Environment variables
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Editor/OS specific files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Test snapshots (if using Jest/Vitest)
+/src/__tests__/__snapshots__/
+
+# Other common files to ignore
+*.tgz
+my-app*
+template/
