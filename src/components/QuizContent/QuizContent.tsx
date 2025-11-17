@@ -8,7 +8,7 @@ const CreateQuiz: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
 
   const handleBackToCourse = () => {
-    navigate(`/instructor/course/${courseId}`);
+    navigate(`/teacher/course/${courseId}`);
   };
 
   return (

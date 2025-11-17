@@ -24,7 +24,7 @@ function App() {
             }
           />
           <Route
-            path="/instructor"
+            path="/teacher"
             element={
               <ProtectedRoute>
                 <InstructorDashboard />
@@ -32,7 +32,7 @@ function App() {
             }
           />
           <Route
-            path="/instructor/course/:courseId"
+            path="/teacher/course/:courseId"
             element={
               <ProtectedRoute>
                 <CourseContentPage />
@@ -40,7 +40,7 @@ function App() {
             }
           />
           <Route
-            path="/instructor/course/:courseId/quiz/create"
+            path="/teacher/course/:courseId/quiz/create"
             element={
               <ProtectedRoute>
                 <QuizContentPage />

@@ -114,7 +114,7 @@
 
 .profile-name {
   font-weight: 600;
-  color: white;
+  color: white !important;
   margin: 0;
 }
 

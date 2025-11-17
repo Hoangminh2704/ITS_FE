@@ -18,15 +18,14 @@ export const InstructorHeader: React.FC<InstructorHeaderProps> = ({
 
     switch (tab) {
       case "Dashboard":
-        navigate("/instructor");
+        navigate("/teacher");
         break;
       case "Courses":
-        navigate(`/instructor/course/${courseId}`);
+        navigate(`/teacher/course/${courseId}`);
         break;
       case "Quizzes":
-        navigate(`/instructor/course/${courseId}/quiz/create`);
+        navigate(`/teacher/course/${courseId}/quiz/create`);
         break;
-      // Thêm các case khác nếu cần
       default:
         break;
     }

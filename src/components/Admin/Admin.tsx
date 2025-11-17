@@ -19,7 +19,7 @@ const Admin: React.FC = () => {
       id: "#12346",
       name: "Trần Văn Minh",
       email: "tran.minh@example.com",
-      role: "Instructor",
+      role: "Teacher",
       dateJoined: "20/01/2024",
       avatar:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuBeRNJFtvjAq6ulIbqjmGmdXh47svJqwzCJPdTJgUh8J0ShDBWTjZTVg9O6-kTZ-axNl5LrltG55amAM0EEn-yBS1Goc4jK3DDhXomx_H1kwmrB681jb0wVlX4vwNJ3PaZ0xus7OWWZ408SWDbFW5qOLZzD7R7sFYYdXPlk4bUfgi7WRPDnxH3_2tK_hA4q3pD4f1Iye9lFSae4M0yjojFgdBRe64t3bKcLs_QvDT0gp9uKPNGV6aas5VfprTZYPHqxe7FuYdBlDg4H",
@@ -37,7 +37,7 @@ const Admin: React.FC = () => {
       id: "#12348",
       name: "Phạm Thị Hương",
       email: "pham.huong@example.com",
-      role: "Instructor",
+      role: "Teacher",
       dateJoined: "25/01/2024",
       avatar:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuDl16sapPM08e2zsGhAAzfLF8awxkQFXgbqISwcP20CLVbp46x3spDHPASSDFk0pam-gXsH66MViKGSHzO9ufzkBCkD7cCMIqoMg-887WamnPdWbeHlXe77Nyl6tk0yv47GDdc8SHDeZJSSlBEQLrCfsUJqVpTL0oydlynrEV8cAgQ2L85TIJNKdJt9l3Kx6FYyXRx9NQU7nWJ2qtHBftB1veOCeK365MxKYpkNbFMPjC6tdoBRkNalobyR_8HTxT99e3BsGRFxlZUl",
@@ -57,8 +57,8 @@ const Admin: React.FC = () => {
     switch (role.toLowerCase()) {
       case "admin":
         return "role-badge role-admin";
-      case "instructor":
-        return "role-badge role-instructor";
+      case "teacher":
+        return "role-badge role-teacher";
       case "student":
         return "role-badge role-student";
       default:
@@ -70,7 +70,7 @@ const Admin: React.FC = () => {
     switch (role.toLowerCase()) {
       case "admin":
         return "shield";
-      case "instructor":
+      case "teacher":
         return "school";
       case "student":
         return "face";
@@ -170,7 +170,7 @@ const Admin: React.FC = () => {
               <select title="Filter by role" className="filter-select">
                 <option>All Roles</option>
                 <option>Admin</option>
-                <option>Instructor</option>
+                <option>Teacher</option>
                 <option>Student</option>
               </select>
               <div className="toolbar-spacer"></div>

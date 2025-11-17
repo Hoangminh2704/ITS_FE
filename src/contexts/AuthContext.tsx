@@ -2,9 +2,10 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface User {
-  email: string;
+  id: string;
   name: string;
-  role: string;
+  email: string;
+  role: "Admin" | "Teacher" | "Student";
 }
 
 interface AuthContextType {
@@ -16,25 +17,27 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Danh sách tài khoản mặc định
-const DEFAULT_ACCOUNTS = [
+const demoUsers = [
   {
+    id: "1",
     email: "admin@its.com",
     password: "admin123",
-    name: "Administrator",
-    role: "Admin",
+    name: "Admin User",
+    role: "Admin" as const,
   },
   {
-    email: "instructor@its.com",
-    password: "instructor123",
-    name: "John Instructor",
-    role: "Instructor",
+    id: "2",
+    email: "teacher@its.com",
+    password: "teacher123",
+    name: "John Anderson",
+    role: "Teacher" as const,
   },
   {
+    id: "3",
     email: "student@its.com",
     password: "student123",
-    name: "Jane Student",
-    role: "Student",
+    name: "Alex Johnson",
+    role: "Student" as const,
   },
 ];
 
@@ -42,58 +45,59 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
-  // Kiểm tra localStorage khi load app
   useEffect(() => {
     const savedUser = localStorage.getItem("its_user");
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      const parsedUser = JSON.parse(savedUser);
+      setUser(parsedUser);
+      setIsAuthenticated(true);
     }
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    // Tìm tài khoản trong danh sách
-    const account = DEFAULT_ACCOUNTS.find(
-      (acc) => acc.email === email && acc.password === password
+    const foundUser = demoUsers.find(
+      (u) => u.email === email && u.password === password
     );
 
-    if (account) {
-      const userData = {
-        email: account.email,
-        name: account.name,
-        role: account.role,
+    if (foundUser) {
+      const userData: User = {
+        id: foundUser.id,
+        name: foundUser.name,
+        email: foundUser.email,
+        role: foundUser.role,
       };
+
       setUser(userData);
+      setIsAuthenticated(true);
       localStorage.setItem("its_user", JSON.stringify(userData));
 
-      // Chuyển hướng dựa trên role
-      switch (account.role) {
+      switch (foundUser.role) {
         case "Admin":
           navigate("/admin");
           break;
-        case "Instructor":
-          navigate("/instructor");
+        case "Teacher":
+          navigate("/teacher");
           break;
         case "Student":
           navigate("/student");
           break;
-        default:
-          navigate("/");
       }
 
       return true;
     }
+
     return false;
   };
 
   const logout = () => {
     setUser(null);
+    setIsAuthenticated(false);
     localStorage.removeItem("its_user");
     navigate("/login");
   };
-
-  const isAuthenticated = !!user;
 
   return (
     <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>

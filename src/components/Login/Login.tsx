@@ -61,8 +61,8 @@ const Login: React.FC = () => {
             <span>admin@its.com / admin123</span>
           </div>
           <div className="demo-account">
-            <span className="demo-badge demo-instructor">Instructor</span>
-            <span>instructor@its.com / instructor123</span>
+            <span className="demo-badge demo-teacher">Teacher</span>
+            <span>teacher@its.com / teacher123</span>
           </div>
           <div className="demo-account">
             <span className="demo-badge demo-student">Student</span>

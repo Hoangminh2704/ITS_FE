@@ -11,7 +11,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   const navigate = useNavigate();
 
   const handleManageCourse = () => {
-    navigate(`/instructor/course/${course.id}`);
+    navigate(`/teacher/course/${course.id}`);
   };
 
   return (

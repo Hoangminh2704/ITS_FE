@@ -23,7 +23,7 @@ const InstructorDashboard: React.FC = () => {
               <div className="sidebar-logo">
                 <span className="material-icons">school</span>
               </div>
-              <span className="sidebar-title">ITS Instructor Panel</span>
+              <span className="sidebar-title">ITS Teacher Panel</span>
             </div>
           </div>
           <nav className="sidebar-nav">
@@ -58,7 +58,7 @@ const InstructorDashboard: React.FC = () => {
                   <p className="profile-name">
                     {user?.name || "John Anderson"}
                   </p>
-                  <p className="profile-role">{user?.role || "Instructor"}</p>
+                  <p className="profile-role">{user?.role || "Teacher"}</p>
                 </div>
               </div>
               <button className="profile-options-btn">
@@ -76,7 +76,7 @@ const InstructorDashboard: React.FC = () => {
         <main className="main-content">
           <header className="dashboard-header">
             <div>
-              <h1 className="header-title">Welcome back, Instructor!</h1>
+              <h1 className="header-title">Welcome back, Teacher!</h1>
               <p className="header-subtitle">
                 Here's what's happening with your courses today
               </p>
