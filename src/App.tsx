@@ -7,7 +7,8 @@ import QuizContentPage from "./pages/QuizContentPage/QuizContentPage";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import InstructorDashboard from "./components/InstructorDashboard/InstructorDashboard";
-import StudentDashboard from "./components/StudentDashboard/StudentDashboard";
+import StudentDashboard from "./pages/StudentDashboard/StudentDashboard";
+import StudentCoursesView from "./pages/StudentCoursesView/StudentCoursesView";
 
 function App() {
   return (
@@ -52,6 +53,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <StudentDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/course/:courseId"
+            element={
+              <ProtectedRoute>
+                <StudentCoursesView />
               </ProtectedRoute>
             }
           />

@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import type { StudentCourse } from "../../types/studentCourse";
 import "./StudentCourseCard.css";
 
@@ -26,7 +27,12 @@ const getTagClass = (category: StudentCourse["tagCategory"]) => {
 };
 
 const StudentCourseCard: React.FC<CourseCardProps> = ({ course }) => {
+  const navigate = useNavigate();
   const tagClassName = `course-card-std-tag ${getTagClass(course.tagCategory)}`;
+
+  const handleContinueLearning = () => {
+    navigate(`/student/course/${course.id}`);
+  };
 
   return (
     <div className="course-card-std">
@@ -46,7 +52,10 @@ const StudentCourseCard: React.FC<CourseCardProps> = ({ course }) => {
         </div>
         <h3 className="course-card-std-title">{course.title}</h3>
         <p className="course-card-std-desc">{course.description}</p>
-        <button className="course-card-std-btn">
+        <button
+          className="course-card-std-btn"
+          onClick={handleContinueLearning}
+        >
           Continue Learning{" "}
           <span className="material-symbols-outlined">arrow_forward</span>
         </button>
