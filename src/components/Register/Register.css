@@ -13,7 +13,7 @@
   --input-bg-light: #f9fafb;
 }
 
-.login-container {
+.register-container {
   font-family: "Public Sans", sans-serif;
   min-height: 100vh;
   display: flex;
@@ -23,7 +23,7 @@
   padding: 1.5rem;
 }
 
-.login-card {
+.register-card {
   width: 100%;
   max-width: 450px;
   background-color: white;
@@ -35,7 +35,7 @@
   box-sizing: border-box;
 }
 
-.login-header {
+.register-header {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -80,7 +80,7 @@
   margin-top: 0.5rem;
 }
 
-.login-form {
+.register-form {
   text-align: left;
 }
 
@@ -123,7 +123,7 @@
   box-sizing: border-box;
 }
 
-.login-form .form-input,
+.register-form .form-input,
 .form-group .form-input {
   padding-left: 3rem !important;
 }
@@ -162,7 +162,42 @@
   font-size: 1.25rem;
 }
 
+.role-selection {
+  margin-bottom: 1.5rem;
+}
+
+.role-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary-light);
+  margin-bottom: 0.75rem;
+}
+
+.role-options {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.role-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.role-option-label {
+  font-size: 0.875rem;
+  color: var(--text-primary-light);
+  cursor: pointer;
+}
+
 .remember-me {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.role-check {
   display: flex;
   align-items: center;
   margin-bottom: 1.5rem;
@@ -239,11 +274,11 @@
   }
 }
 
-.forgot-password {
+.have-account {
   margin-top: 1.5rem;
 }
 
-.forgot-password a {
+.have-account a {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--primary-color);
@@ -251,25 +286,7 @@
   transition: color 0.2s;
 }
 
-.forgot-password a:hover {
-  text-decoration: underline;
-  color: var(--primary-hover);
-}
-
-.create-account {
-  text-align: center;
-  margin-top: 0.5rem;
-}
-
-.create-account a {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--primary-color);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.create-account a:hover {
+.have-account a:hover {
   text-decoration: underline;
   color: var(--primary-hover);
 }

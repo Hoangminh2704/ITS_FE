@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import "./Login.css";
+import "./Register.css";
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [isTeacher, setIsTeacher] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { register } = useAuth();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -19,20 +22,31 @@ const Login: React.FC = () => {
     setError("");
     setLoading(true);
 
+    // Basic validation
+    if (password.length <= 6) {
+      setError("Password must greater than 6 characters long");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const success = await login(email, password);
+      const role = isTeacher ? "TEACHER" : "STUDENT";
+      const success = await register(email, password, name, role);
+
       if (!success) {
-        setError("Invalid email or password");
+        setError("Registration failed. Please try again.");
       }
+    } catch (err: any) {
+      setError(err.message || "Registration failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <div className="login-header">
+    <div className="register-container">
+      <div className="register-card">
+        <div className="register-header">
           <div className="logo-icon">
             <span
               className="material-icons-outlined"
@@ -46,9 +60,9 @@ const Login: React.FC = () => {
         </div>
 
         <div className="welcome-header">
-          <h2 className="welcome-title">Login to ITS</h2>
+          <h2 className="welcome-title">Register to ITS</h2>
           <p className="welcome-subtitle">
-            Welcome back! Please login to continue.
+            Welcome to ITS! Please create account to start learning.
           </p>
         </div>
 
@@ -72,7 +86,27 @@ const Login: React.FC = () => {
 
         {error && <div className="error-message">{error}</div>}
 
-        <form className="login-form" onSubmit={handleSubmit}>
+        <form className="register-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label" htmlFor="name">
+              Full Name
+            </label>
+            <div className="input-wrapper">
+              <span className="material-icons-outlined input-icon">
+                person_outline
+              </span>
+              <input
+                className="form-input"
+                id="name"
+                name="name"
+                placeholder="Enter your full name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+          </div>
           <div className="form-group">
             <label className="form-label" htmlFor="email">
               Email
@@ -124,12 +158,46 @@ const Login: React.FC = () => {
             </div>
           </div>
 
+          <div className="role-selection">
+            <p className="role-label">Register as:</p>
+            <div className="role-options">
+              <div className="role-option">
+                <input
+                  className="checkbox"
+                  id="student"
+                  name="role"
+                  type="radio"
+                  checked={!isTeacher}
+                  onChange={() => setIsTeacher(false)}
+                />
+                <label className="role-option-label" htmlFor="student">
+                  Student
+                </label>
+              </div>
+              <div className="role-option">
+                <input
+                  className="checkbox"
+                  id="teacher"
+                  name="role"
+                  type="radio"
+                  checked={isTeacher}
+                  onChange={() => setIsTeacher(true)}
+                />
+                <label className="role-option-label" htmlFor="teacher">
+                  Teacher
+                </label>
+              </div>
+            </div>
+          </div>
+
           <div className="remember-me">
             <input
               className="checkbox"
               id="remember-me"
               name="remember-me"
               type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
             />
             <label className="remember-label" htmlFor="remember-me">
               Remember me
@@ -138,21 +206,18 @@ const Login: React.FC = () => {
 
           <div>
             <button className="submit-btn" type="submit" disabled={loading}>
-              {loading ? "Logging in..." : "Login"}
+              {loading ? "Logging in..." : "register"}
             </button>
           </div>
         </form>
 
         {/* Forgot Password Link */}
-        <div className="forgot-password">
-          <a href="#">Forgot password?</a>
-        </div>
-        <div className="create-account">
-          <a href="/register">Create new account.</a>
+        <div className="have-account">
+          <a href="/login">Already have an account? Login</a>
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Register;

@@ -1,0 +1,368 @@
+/* components/TopicCard/TopicCard.css */
+.topic-card {
+  background: white;
+  border: 1px solid var(--border-light);
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
+}
+
+.dark .topic-card {
+  background: var(--card-dark);
+  border-color: var(--border-dark);
+}
+
+.topic-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.topic-card-header {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem;
+  cursor: pointer;
+}
+
+.dark .topic-card-header {
+  background: var(--card-dark);
+}
+
+.topic-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.topic-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-light-primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.dark .topic-name {
+  color: var(--text-dark-primary);
+}
+
+.topic-description {
+  color: var(--text-light-secondary);
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+}
+
+.dark .topic-description {
+  color: var(--text-dark-secondary);
+}
+
+.topic-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.edit-btn,
+.delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid;
+  border-radius: 0.5rem;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.dark .edit-btn,
+.dark .delete-btn {
+  background: var(--card-dark);
+}
+
+.edit-btn {
+  color: #2563eb;
+  border-color: #2563eb;
+}
+
+.edit-btn:hover {
+  background: #2563eb;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.delete-btn {
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+.delete-btn:hover {
+  background: #dc2626;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+}
+
+.edit-btn .material-icons,
+.delete-btn .material-icons {
+  font-size: 1.125rem;
+}
+
+.topic-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.difficulty-badge {
+  display: inline-block;
+  padding: 0.375rem 0.875rem;
+  border-radius: 1rem;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.topic-stats-header {
+  display: flex;
+  gap: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--text-light-secondary);
+}
+
+.dark .stat-item {
+  color: var(--text-dark-secondary);
+}
+
+.stat-item .material-icons {
+  font-size: 1.125rem;
+  opacity: 0.7;
+}
+
+.topic-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-left: 1rem;
+}
+
+.expand-btn,
+.add-question-btn,
+.add-material-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.625rem 0.875rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.expand-btn {
+  color: var(--text-light-secondary);
+  border: 1px solid var(--border-light);
+}
+
+.expand-btn:hover {
+  background: var(--border-light);
+  color: var(--text-light-primary);
+  transform: translateY(-1px);
+}
+
+.dark .expand-btn {
+  color: var(--text-dark-secondary);
+  border-color: var(--border-dark);
+}
+
+.dark .expand-btn:hover {
+  background: var(--border-dark);
+  color: var(--text-dark-primary);
+}
+
+.add-question-btn {
+  background: #3b82f6;
+  color: white;
+}
+
+.add-question-btn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.add-material-btn {
+  background: #10b981;
+  color: white;
+}
+
+.add-material-btn:hover {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.topic-content {
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.dark .topic-content {
+  border-top-color: var(--border-dark);
+}
+
+.topic-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1.5rem 0 1rem 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.dark .topic-tabs {
+  border-bottom-color: var(--border-dark);
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  color: var(--text-light-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.tab-btn:hover {
+  color: var(--text-light-primary);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.dark .tab-btn:hover {
+  color: var(--text-dark-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.dark .tab-btn.active {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-light-primary);
+  margin: 1.5rem 0 1rem 0;
+}
+
+.dark .section-title {
+  color: var(--text-dark-primary);
+}
+
+.questions-section,
+.materials-section {
+  margin-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .topic-card-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .topic-actions {
+    align-self: stretch;
+    justify-content: flex-end;
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+
+  .topic-header-actions {
+    justify-content: flex-start;
+  }
+
+  .topic-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .topic-stats-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .expand-btn,
+  .add-question-btn,
+  .add-material-btn,
+  .edit-btn,
+  .delete-btn {
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .topic-actions {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .topic-card-header {
+    padding: 1.25rem;
+  }
+
+  .topic-content {
+    padding: 0 1.25rem 1.25rem 1.25rem;
+  }
+
+  .topic-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .topic-header-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 2rem; /* Tăng lên 2rem */
+  }
+
+  .edit-btn,
+  .delete-btn {
+    width: 100%;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+}

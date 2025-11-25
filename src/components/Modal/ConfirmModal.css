@@ -1,0 +1,88 @@
+/* components/Modal/ConfirmModal.css */
+.confirm-modal {
+  padding: 0.5rem 0;
+}
+
+.confirm-message {
+  color: var(--text-light-secondary);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.dark .confirm-message {
+  color: var(--text-dark-secondary);
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.confirm-cancel-btn {
+  padding: 0.625rem 1.25rem;
+  border: 1px solid var(--border-light);
+  border-radius: 0.5rem;
+  background: white;
+  color: var(--text-light-primary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
+
+.confirm-cancel-btn:hover {
+  background: var(--border-light);
+}
+
+.dark .confirm-cancel-btn {
+  background: var(--card-dark);
+  border-color: var(--border-dark);
+  color: var(--text-dark-primary);
+}
+
+.dark .confirm-cancel-btn:hover {
+  background: var(--border-dark);
+}
+
+.confirm-btn {
+  padding: 0.625rem 1.25rem;
+  border: none;
+  border-radius: 0.5rem;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
+
+.confirm-danger {
+  background: #dc2626;
+}
+
+.confirm-danger:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
+}
+
+.confirm-warning {
+  background: #f59e0b;
+}
+
+.confirm-warning:hover {
+  background: #d97706;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+}
+
+.confirm-info {
+  background: #3b82f6;
+}
+
+.confirm-info:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}

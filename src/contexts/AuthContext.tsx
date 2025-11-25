@@ -1,5 +1,8 @@
+// contexts/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+const IDENTITY_SERVICE_API_URL = `http://localhost:8080`;
 
 interface User {
   id: string;
@@ -11,35 +14,20 @@ interface User {
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
+  register: (
+    email: string,
+    password: string,
+    fullname: string,
+    role: string
+  ) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
+  hasRole: (roles: User["role"][]) => boolean;
+  isTeacher: boolean;
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const demoUsers = [
-  {
-    id: "1",
-    email: "admin@its.com",
-    password: "admin123",
-    name: "Admin User",
-    role: "Admin" as const,
-  },
-  {
-    id: "2",
-    email: "teacher@its.com",
-    password: "teacher123",
-    name: "John Anderson",
-    role: "Teacher" as const,
-  },
-  {
-    id: "3",
-    email: "student@its.com",
-    password: "student123",
-    name: "Alex Johnson",
-    role: "Student" as const,
-  },
-];
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -47,6 +35,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
+
+  // Tính toán derived values
+  const isTeacher = user?.role === "Teacher" || user?.role === "Admin";
+  const isAdmin = user?.role === "Admin";
+
+  const hasRole = (roles: User["role"][]): boolean => {
+    if (!user) return false;
+    return roles.includes(user.role);
+  };
 
   useEffect(() => {
     const savedUser = localStorage.getItem("its_user");
@@ -58,23 +55,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    const foundUser = demoUsers.find(
-      (u) => u.email === email && u.password === password
-    );
+    try {
+      const response = await fetch(`${IDENTITY_SERVICE_API_URL}/api/v1/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (foundUser) {
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error("Invalid credentials");
+        }
+        throw new Error("Login failed");
+      }
+
+      const data = await response.json();
+      const token = data.jwt;
+
+      if (!token) {
+        throw new Error("No token received");
+      }
+
+      // Decode JWT to get user information
+      const decodedToken = parseJwt(token);
+
       const userData: User = {
-        id: foundUser.id,
-        name: foundUser.name,
-        email: foundUser.email,
-        role: foundUser.role,
+        id: decodedToken.id,
+        name: decodedToken.email.split("@")[0],
+        email: decodedToken.email,
+        role: mapRole(decodedToken.role),
       };
 
       setUser(userData);
       setIsAuthenticated(true);
       localStorage.setItem("its_user", JSON.stringify(userData));
+      localStorage.setItem("its_token", token);
 
-      switch (foundUser.role) {
+      // Navigate based on role
+      switch (userData.role) {
         case "Admin":
           navigate("/admin");
           break;
@@ -84,23 +104,104 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         case "Student":
           navigate("/student");
           break;
+        default:
+          navigate("/");
       }
 
       return true;
+    } catch (error) {
+      console.error("Login error:", error);
+      return false;
     }
+  };
 
-    return false;
+  const register = async (
+    email: string,
+    password: string,
+    fullname: string,
+    role: string
+  ): Promise<boolean> => {
+    try {
+      const response = await fetch(
+        `${IDENTITY_SERVICE_API_URL}/api/v1/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+            fullname,
+            role: role.toUpperCase(),
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Registration failed");
+      }
+
+      const data = await response.json();
+      return await login(email, password);
+    } catch (error) {
+      console.error("Registration error:", error);
+      return false;
+    }
   };
 
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
     localStorage.removeItem("its_user");
+    localStorage.removeItem("its_token");
     navigate("/login");
   };
 
+  function parseJwt(token: string): any {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      );
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      console.error("Error parsing JWT:", error);
+      return {};
+    }
+  }
+
+  function mapRole(role: string): "Admin" | "Teacher" | "Student" {
+    switch (role.toLowerCase()) {
+      case "admin":
+        return "Admin";
+      case "teacher":
+        return "Teacher";
+      case "student":
+        return "Student";
+      default:
+        return "Student";
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        register,
+        logout,
+        isAuthenticated,
+        hasRole,
+        isTeacher,
+        isAdmin,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

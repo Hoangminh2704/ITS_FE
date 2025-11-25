@@ -9,6 +9,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import InstructorDashboard from "./components/InstructorDashboard/InstructorDashboard";
 import StudentDashboard from "./pages/StudentDashboard/StudentDashboard";
 import StudentCoursesView from "./pages/StudentCoursesView/StudentCoursesView";
+import Register from "./pages/Register/Register";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route
             path="/admin"
             element={
@@ -33,7 +35,7 @@ function App() {
             }
           />
           <Route
-            path="/teacher/course/:courseId"
+            path="/teacher/course"
             element={
               <ProtectedRoute>
                 <CourseContentPage />
