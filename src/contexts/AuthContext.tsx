@@ -1,6 +1,7 @@
 // contexts/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import type { UserDetail } from "../types";
 
 const IDENTITY_SERVICE_API_URL = `http://localhost:8080`;
 
@@ -25,6 +26,7 @@ interface AuthContextType {
   hasRole: (roles: User["role"][]) => boolean;
   isTeacher: boolean;
   isAdmin: boolean;
+  getAllUsers: () => Promise<UserDetail[]>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -45,14 +47,73 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return roles.includes(user.role);
   };
 
-  useEffect(() => {
-    const savedUser = localStorage.getItem("its_user");
-    if (savedUser) {
-      const parsedUser = JSON.parse(savedUser);
-      setUser(parsedUser);
-      setIsAuthenticated(true);
+  // Hàm validate token
+  const validateToken = (token: string): boolean => {
+    try {
+      const decodedToken = parseJwt(token);
+      const currentTime = Date.now() / 1000;
+
+      // Kiểm tra token expiration
+      if (decodedToken.exp && decodedToken.exp < currentTime) {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      return false;
     }
-  }, []);
+  };
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+      const savedUser = localStorage.getItem("its_user");
+      const savedToken = localStorage.getItem("its_token");
+
+      if (savedUser && savedToken) {
+        // Validate token trước khi khôi phục state
+        if (validateToken(savedToken)) {
+          const parsedUser = JSON.parse(savedUser);
+          setUser(parsedUser);
+          setIsAuthenticated(true);
+
+          // Nếu đang ở trang login, redirect đến trang chính
+          if (
+            window.location.pathname === "/login" ||
+            window.location.pathname === "/"
+          ) {
+            switch (parsedUser.role) {
+              case "Admin":
+                navigate("/admin");
+                break;
+              case "Teacher":
+                navigate("/teacher");
+                break;
+              case "Student":
+                navigate("/student");
+                break;
+              default:
+                navigate("/");
+            }
+          }
+        } else {
+          // Token không hợp lệ, clear storage
+          localStorage.removeItem("its_token");
+          localStorage.removeItem("its_user");
+          if (window.location.pathname !== "/login") {
+            navigate("/login");
+          }
+        }
+      } else {
+        // Không có token, redirect đến login nếu đang ở trang cần auth
+        const publicRoutes = ["/login", "/register"];
+        if (!publicRoutes.includes(window.location.pathname)) {
+          navigate("/login");
+        }
+      }
+    };
+
+    initializeAuth();
+  }, [navigate]);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
@@ -159,6 +220,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     navigate("/login");
   };
 
+  const getAllUsers = async (): Promise<UserDetail[]> => {
+    try {
+      const token = localStorage.getItem("its_token");
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
+
+      const response = await fetch(`${IDENTITY_SERVICE_API_URL}/api/v1/users`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          await handleUnauthorized();
+        }
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Get all users error:", error);
+      throw error;
+    }
+  };
+
+  const handleUnauthorized = async () => {
+    localStorage.removeItem("its_token");
+    localStorage.removeItem("its_user");
+    setUser(null);
+    setIsAuthenticated(false);
+    if (window.location.pathname !== "/login") {
+      navigate("/login");
+    }
+    throw new Error("Unauthorized");
+  };
+
   function parseJwt(token: string): any {
     try {
       const base64Url = token.split(".")[1];
@@ -200,6 +301,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         hasRole,
         isTeacher,
         isAdmin,
+        getAllUsers,
       }}
     >
       {children}

@@ -1,0 +1,85 @@
+/* components/Modal/AlertModal.css */
+.alert-modal {
+  padding: 0.5rem 0;
+}
+
+.alert-message {
+  color: var(--text-light-secondary);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.dark .alert-message {
+  color: var(--text-dark-secondary);
+}
+
+.alert-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.alert-icon .material-symbols-outlined {
+  font-size: 3rem;
+}
+
+.alert-success .alert-icon {
+  color: #22c55e;
+}
+
+.alert-error .alert-icon {
+  color: #ef4444;
+}
+
+.alert-warning .alert-icon {
+  color: #f59e0b;
+}
+
+.alert-info .alert-icon {
+  color: #3b82f6;
+}
+
+.alert-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.alert-btn {
+  padding: 0.625rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+  min-width: 80px;
+}
+
+.alert-btn-primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.alert-btn-primary:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.alert-btn-secondary {
+  background: var(--border-light);
+  color: var(--text-light-primary);
+  border: 1px solid var(--border-light);
+}
+
+.dark .alert-btn-secondary {
+  background: var(--border-dark);
+  color: var(--text-dark-primary);
+  border-color: var(--border-dark);
+}
+
+.alert-btn-secondary:hover {
+  background: var(--editor-secondary-hover);
+}

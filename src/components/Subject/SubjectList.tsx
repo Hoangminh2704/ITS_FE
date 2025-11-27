@@ -1,4 +1,3 @@
-// components/SubjectsList/SubjectsList.tsx
 import React from "react";
 import type { Subject } from "../../types";
 import "./SubjectList.css";
@@ -7,17 +6,21 @@ import SubjectCard from "./SubjectCard";
 interface SubjectsListProps {
   subjects: Subject[];
   onTopicCreated: () => void;
-  onSubjectUpdated: () => void; // Thêm prop này
+  onSubjectUpdated: () => void;
+  onSubjectDeleted: () => void;
   canEdit: boolean;
   emptyStateMessage?: string;
+  onEditSubject?: (subject: Subject) => void;
 }
 
 const SubjectsList: React.FC<SubjectsListProps> = ({
   subjects,
   onTopicCreated,
-  onSubjectUpdated, // Nhận prop từ parent
+  onSubjectUpdated,
+  onSubjectDeleted,
   canEdit,
   emptyStateMessage = "No subjects available",
+  onEditSubject
 }) => {
   if (subjects.length === 0) {
     return (
@@ -30,14 +33,16 @@ const SubjectsList: React.FC<SubjectsListProps> = ({
   }
 
   return (
-    <div className="subjects-list">
+    <div className="subjects-grid">
       {subjects.map((subject) => (
         <SubjectCard
           key={subject.subjectId}
           subject={subject}
-          onTopicCreated={onTopicCreated} // Truyền callback từ parent
-          onSubjectUpdated={onSubjectUpdated} // Truyền callback từ parent
+          onTopicCreated={onTopicCreated}
+          onSubjectUpdated={onSubjectUpdated}
+          onSubjectDeleted={onSubjectDeleted}
           canEdit={canEdit}
+          onEditSubject={onEditSubject}
         />
       ))}
     </div>

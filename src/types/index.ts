@@ -3,6 +3,54 @@ export interface BaseEntity {
   createdAt?: string;
   updatedAt?: string;
 }
+// User Types
+export interface UserRole {
+  id: number;
+  role_name: string;
+}
+export interface User extends BaseEntity {
+  id: number;
+  name: string;
+  email: string;
+  role: "Admin" | "Teacher" | "Student";
+}
+export interface UserDetail {
+  id: number;
+  email: string;
+  fullname: string;
+  role: UserRole;
+  created_at: string;
+}
+export interface UserListResponse {
+  users: UserDetail[];
+}
+
+export interface LoginRequestDTO {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponseDTO {
+  jwt: string;
+}
+export interface RegisterRequestDTO {
+  email: string;
+  password: string;
+  fullname: string;
+  role: string;
+}
+
+export interface RegisterResponseDTO {
+  message: string;
+}
+
+export interface UserResponseDTO {
+  id: string;
+  email: string;
+  name: string;
+  role: "Admin" | "Teacher" | "Student";
+}
+
 // Subject Types
 export interface Subject extends BaseEntity {
   subjectId?: number;
@@ -52,7 +100,7 @@ export interface Question extends BaseEntity {
   type?: string;
   correctAnswer?: string;
   hintContent?: string;
-  topicId: number;
+  topicId?: number;
   topic?: Topic;
 }
 export interface QuestionRequestDTO {
@@ -78,7 +126,7 @@ export interface LearningMaterial extends BaseEntity {
   content?: string;
   type?: string;
   duration?: number;
-  topicId: number;
+  topicId?: number;
   topic?: Topic;
 }
 export interface LearningMaterialRequestDTO {

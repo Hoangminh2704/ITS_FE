@@ -1,65 +1,170 @@
-// components/InstructorDashboard/InstructorDashboard.tsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-
+import Sidebar from "../Sidebar/Sidebar";
 import "./InstructorDashboard.css";
-import type { Subject } from "../../types";
+import type { Question, Subject, Topic, UserDetail } from "../../types";
 import { apiService } from "../../services/apiService";
 import SubjectForm from "../Forms/SubjectForm";
 import SubjectsList from "../Subject/SubjectList";
+import StatsGrid from "../Stat/StatsGrid";
 
 const InstructorDashboard: React.FC = () => {
-  const { logout, user } = useAuth();
+  const { user } = useAuth();
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [topics, setTopics] = useState<Topic[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  // const [users, setUsers] = useState<UserDetail[]>([]);
   const [error, setError] = useState("");
   const [isSubjectFormOpen, setSubjectFormOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [activeSidebarItem, setActiveSidebarItem] = useState("dashboard");
+  const [editingSubject, setEditingSubject] = useState<Subject | undefined>(
+    undefined
+  );
 
   // Check if user has permission to create subjects
   const canCreateSubject = user?.role === "Teacher";
 
   useEffect(() => {
-    const fetchSubjects = async () => {
+    const fetchStats = async () => {
       try {
         setLoading(true);
         const subjectsData = await apiService.getSubjects();
         setSubjects(subjectsData);
+
+        // Fetch all questions for stats
+        const allQuestions = await getAllQuestions(subjectsData);
+        setQuestions(allQuestions);
+        // const usersData = await apiService.getAllUsers();
+        // setUsers(usersData);
       } catch (err: any) {
-        setError(err.message || "Failed to load subjects");
-        console.error("Error fetching subjects:", err);
+        setError(err.message || "Failed to load data");
+        console.error("Error fetching data:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSubjects();
+    fetchStats();
   }, []);
 
-  const handleLogout = () => {
-    if (window.confirm("Are you sure you want to logout?")) {
-      logout();
+  // Hàm để lấy tất cả questions từ tất cả subjects và topics
+  const getAllQuestions = async (
+    subjectsData: Subject[]
+  ): Promise<Question[]> => {
+    try {
+      const allQuestions: Question[] = [];
+
+      // Duyệt qua từng subject và lấy questions từ các topics
+      for (const subject of subjectsData) {
+        if (subject.subjectId) {
+          // Lấy topics của subject
+          const topics = await apiService.getTopicsBySubject(subject.subjectId);
+
+          // Duyệt qua từng topic và lấy questions
+          for (const topic of topics) {
+            if (topic.topicId) {
+              const questions = await apiService.getQuestionsByTopic(
+                topic.topicId
+              );
+              allQuestions.push(...questions);
+            }
+          }
+        }
+      }
+      console.log("allQuestions", allQuestions);
+      return allQuestions;
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+      return [];
     }
+  };
+
+  const handleSidebarItemClick = (item: string) => {
+    setActiveSidebarItem(item);
   };
 
   const refreshSubjects = async () => {
     try {
       const subjectsData = await apiService.getSubjects();
       setSubjects(subjectsData);
+
+      // Refresh questions khi subjects được refresh
+      const allQuestions = await getAllQuestions(subjectsData);
+      setQuestions(allQuestions);
     } catch (err: any) {
       setError(err.message || "Failed to refresh subjects");
     }
   };
 
+  // Thêm hàm xử lý edit subject
+  const handleEditSubject = (subject: Subject) => {
+    setEditingSubject(subject);
+    setSubjectFormOpen(true);
+  };
+
+  // Thêm hàm xử lý close form
+  const handleCloseForm = () => {
+    setSubjectFormOpen(false);
+    setEditingSubject(undefined);
+  };
+
+  // Thêm hàm xử lý create subject
+  const handleCreateSubject = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingSubject(undefined);
+    setSubjectFormOpen(true);
+  };
+
+  // Thêm hàm xử lý sau khi subject được tạo/cập nhật
+  const handleSubjectCreated = () => {
+    refreshSubjects();
+    handleCloseForm();
+  };
+
+  const calculateStats = () => {
+    const totalSubjects = subjects.length;
+    const totalQuestions = questions.length;
+    // const totalStudents =
+    //   users.length > 0
+    //     ? users.filter(
+    //         (user) => user.role.role_name.toLowerCase() === "student"
+    //       ).length
+    //     : 0;
+
+    return [
+      {
+        value: totalSubjects.toString(),
+        label: "Total Subjects",
+        icon: "auto_stories",
+        color: "blue" as const,
+      },
+      // {
+      //   value: totalStudents.toString(),
+      //   label: "Total Students",
+      //   icon: "groups",
+      //   color: "green" as const,
+      // },
+      {
+        value: totalQuestions.toString(),
+        label: "Total Questions",
+        icon: "quiz",
+        color: "purple" as const,
+      },
+    ];
+  };
+
   if (loading) {
     return (
       <div className="dashboard-layout">
-        <aside className="sidebar">
-          {/* Sidebar content same as before */}
-        </aside>
+        <Sidebar
+          activeItem={activeSidebarItem}
+          onItemClick={handleSidebarItemClick}
+        />
         <main className="main-content">
           <div className="loading-state">
             <span className="material-icons spin">refresh</span>
-            <p>Loading subjects...</p>
+            <p>Loading dashboard data...</p>
           </div>
         </main>
       </div>
@@ -68,61 +173,11 @@ const InstructorDashboard: React.FC = () => {
 
   return (
     <div className="dashboard-layout">
-      {/* Sidebar - giữ nguyên */}
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          <div className="sidebar-logo-container">
-            <div className="sidebar-logo">
-              <span className="material-icons">school</span>
-            </div>
-            <span className="sidebar-title">ITS Teacher Panel</span>
-          </div>
-        </div>
-
-        <nav className="sidebar-nav">
-          <ul>
-            <li>
-              <a className="nav-link active" href="#">
-                <span className="material-icons">dashboard</span>
-                <span>Dashboard</span>
-              </a>
-            </li>
-            <li>
-              <a className="nav-link inactive" href="/">
-                <span className="material-icons">library_books</span>
-                <span>Course Management</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-
-        <div className="sidebar-footer">
-          <div className="profile-container">
-            <div className="profile-info">
-              <img
-                alt={`Profile picture of ${user?.name}`}
-                className="profile-avatar"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiKpTfV4aUSlT5YTy0u-_YBXfV-0pltqX62AEL1YW1PbSy_SV9LwdSAoxUCOBkHAm4iLT9aCVFkzuNJHtFFA52l_a4OPYc4CejqDOq1kmtEz9d6mNRmJTNlkpCKFlHCBTWUFrrXMWRJpq8o-Xcfb9Gil8ZXSJHAj39UCN4S35mE3kjpMmq3VC2nvX8BssrsovsyEGIckkVbvhwioHMytknDXzjdi9f4N0fP-WImA5uk9ebD9Vg47RMANcS1gQNduvMMYuQ_y6HiqJN"
-                onError={(e) =>
-                  (e.currentTarget.src =
-                    "https://placehold.co/40x40/6366F1/FFFFFF?text=J")
-                }
-              />
-              <div>
-                <p className="profile-name">{user?.name || "John Anderson"}</p>
-                <p className="profile-role">{user?.role || "Teacher"}</p>
-              </div>
-            </div>
-            <button className="profile-options-btn">
-              <span className="material-icons">more_vert</span>
-            </button>
-          </div>
-          <button className="logout-btn" onClick={handleLogout}>
-            <span className="material-icons">logout</span>
-            <span>Logout</span>
-          </button>
-        </div>
-      </aside>
+      {/* Sidebar Component */}
+      <Sidebar
+        activeItem={activeSidebarItem}
+        onItemClick={handleSidebarItemClick}
+      />
 
       {/* Main Content */}
       <main className="main-content">
@@ -130,7 +185,7 @@ const InstructorDashboard: React.FC = () => {
           <div>
             <h1 className="header-title">Welcome back, {user?.role}!</h1>
             <p className="header-subtitle">
-              Manage your subjects and course content
+              Here's what's happening with your courses today
             </p>
           </div>
           <div style={{ position: "relative" }}>
@@ -141,14 +196,17 @@ const InstructorDashboard: React.FC = () => {
           </div>
         </header>
 
+        {/* Stats Grid Component */}
+        <StatsGrid stats={calculateStats()} />
+
         {/* Subjects Section */}
         <section>
           <div className="course-header">
-            <h2 className="course-title">My Subjects</h2>
+            <h2 className="course-title">My Courses</h2>
             {canCreateSubject && (
               <button
                 className="create-course-btn"
-                onClick={() => setSubjectFormOpen(true)}
+                onClick={handleCreateSubject}
               >
                 <span className="material-icons">add</span>
                 <span>Create New Subject</span>
@@ -176,8 +234,10 @@ const InstructorDashboard: React.FC = () => {
           <SubjectsList
             subjects={subjects}
             onTopicCreated={refreshSubjects}
-            onSubjectUpdated={refreshSubjects} // Fixed: Added missing prop
+            onSubjectUpdated={refreshSubjects}
+            onSubjectDeleted={refreshSubjects}
             canEdit={canCreateSubject}
+            onEditSubject={handleEditSubject}
             emptyStateMessage={
               canCreateSubject
                 ? "Create your first subject to get started"
@@ -191,8 +251,9 @@ const InstructorDashboard: React.FC = () => {
       {canCreateSubject && (
         <SubjectForm
           isOpen={isSubjectFormOpen}
-          onClose={() => setSubjectFormOpen(false)}
-          onSubjectCreated={refreshSubjects}
+          onClose={handleCloseForm}
+          onSubjectCreated={handleSubjectCreated}
+          editingSubject={editingSubject}
         />
       )}
     </div>

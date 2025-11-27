@@ -84,8 +84,8 @@ const SubjectForm: React.FC<SubjectFormProps> = ({
   };
 
   // Xác định title và button text dựa trên mode
-  const modalTitle = editingSubject ? "Edit Subject" : "Create New Subject";
-  const submitButtonText = editingSubject ? "Update Subject" : "Create Subject";
+  const modalTitle = editingSubject ? "Edit Course" : "Create New Course";
+  const submitButtonText = editingSubject ? "Update Course" : "Create Course";
   const loadingText = editingSubject ? "Updating..." : "Creating...";
 
   return (
@@ -99,7 +99,7 @@ const SubjectForm: React.FC<SubjectFormProps> = ({
         <div className="form-content">
           <div className="form-group">
             <label htmlFor="name" className="form-label">
-              Subject Name *
+              Course Name *
             </label>
             <input
               id="name"

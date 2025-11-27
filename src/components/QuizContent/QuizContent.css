@@ -610,3 +610,61 @@
   background-color: var(--color-tag-dark);
   color: var(--color-tag-text-dark);
 }
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--color-text-secondary-light);
+  text-align: center;
+}
+
+.dark .loading-state {
+  color: var(--color-text-secondary-dark);
+}
+
+.loading-state .loading-spinner {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Thêm vào QuizContent.css */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--color-text-secondary-light);
+  text-align: center;
+}
+
+.dark .loading-state {
+  color: var(--color-text-secondary-dark);
+}
+
+.loading-state .loading-spinner {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

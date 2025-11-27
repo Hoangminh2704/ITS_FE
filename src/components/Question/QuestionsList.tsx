@@ -1,40 +1,45 @@
-// components/QuestionsList/QuestionsList.tsx
+// components/Question/QuestionsList.tsx
 import React from "react";
-
-import type { Question } from "../../types";
-import "./QuestionList.css";
 import QuestionCard from "./QuestionCard";
+import "./QuestionList.css";
+import type { Question } from "../../types";
 
 interface QuestionsListProps {
   questions: Question[];
-  canEdit: boolean;
-  onContentCreated: () => void;
-  emptyStateMessage?: string;
+  onEditQuestion: (question: Question) => void;
+  onDeleteQuestion: (question: Question) => void; // Thay đổi từ questionId sang question
+  saving?: boolean;
 }
 
 const QuestionsList: React.FC<QuestionsListProps> = ({
   questions,
-  canEdit,
-  onContentCreated,
-  emptyStateMessage = "No questions available",
+  onEditQuestion,
+  onDeleteQuestion,
+  saving = false,
 }) => {
   if (questions.length === 0) {
     return (
-      <div className="empty-state">
+      <div className="questions-list-empty">
         <span className="material-icons">help_outline</span>
-        <p>{emptyStateMessage}</p>
+        <p>No questions yet. Add your first question to get started.</p>
       </div>
     );
   }
 
   return (
     <div className="questions-list">
-      {questions.map((question) => (
+      {questions.map((question, index) => (
         <QuestionCard
-          key={question.questionId}
-          question={question}
-          canEdit={canEdit}
-          onContentUpdated={onContentCreated}
+          key={question.questionId || `question-${index}`}
+          questionNumber={index + 1}
+          questionText={question.text}
+          questionType={question.type || "multiple_choice"}
+          points={10}
+          options={[]}
+          hintContent={question.hintContent}
+          correctAnswer={question.correctAnswer}
+          onEdit={() => onEditQuestion(question)}
+          onDelete={() => onDeleteQuestion(question)} // Truyền cả question object
         />
       ))}
     </div>

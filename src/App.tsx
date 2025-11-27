@@ -5,11 +5,12 @@ import Admin from "./pages/Admin/Admin";
 import CourseContentPage from "./pages/CourseContentPage/CourseContentPage";
 import QuizContentPage from "./pages/QuizContentPage/QuizContentPage";
 import { AuthProvider } from "./contexts/AuthContext";
-import { ProtectedRoute } from "./components/ProtectedRoute";
+
 import InstructorDashboard from "./components/InstructorDashboard/InstructorDashboard";
 import StudentDashboard from "./pages/StudentDashboard/StudentDashboard";
 import StudentCoursesView from "./pages/StudentCoursesView/StudentCoursesView";
 import Register from "./pages/Register/Register";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
           <Route
             path="/admin"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="Admin">
                 <Admin />
               </ProtectedRoute>
             }
@@ -29,15 +30,15 @@ function App() {
           <Route
             path="/teacher"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="Teacher">
                 <InstructorDashboard />
               </ProtectedRoute>
             }
           />
           <Route
-            path="/teacher/course"
+            path="/teacher/course/:courseId"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="Teacher">
                 <CourseContentPage />
               </ProtectedRoute>
             }
@@ -45,7 +46,7 @@ function App() {
           <Route
             path="/teacher/course/:courseId/quiz/create"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="Teacher">
                 <QuizContentPage />
               </ProtectedRoute>
             }
@@ -53,7 +54,7 @@ function App() {
           <Route
             path="/student"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="Student">
                 <StudentDashboard />
               </ProtectedRoute>
             }
@@ -61,7 +62,7 @@ function App() {
           <Route
             path="/student/course/:courseId"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="Student">
                 <StudentCoursesView />
               </ProtectedRoute>
             }

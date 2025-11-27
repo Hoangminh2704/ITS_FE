@@ -18,12 +18,31 @@
   --color-text-dark: #cbd5e1; /* slate-300 */
   --color-green-500: #22c55e;
   --color-red-500: #ef4444;
+  --color-yellow-500: #f59e0b; /* Thêm màu vàng cho quiz */
+  --color-blue-500: #3b82f6; /* Thêm màu xanh cho exercise */
+}
+
+/* Đảm bảo Material Icons hiển thị đúng */
+.material-icons,
+.material-symbols-outlined {
+  font-family: "Material Icons", "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  vertical-align: middle;
 }
 
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
-  line-height: 1; /* Căn chỉnh icon */
-  vertical-align: middle; /* Căn chỉnh icon */
 }
 
 .course-mgmt-body {
@@ -882,4 +901,17 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+.loading-spinner {
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

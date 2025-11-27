@@ -10,8 +10,8 @@ interface TopicFormProps {
   isOpen: boolean;
   onClose: () => void;
   onTopicCreated: () => void;
-  defaultSubjectId: number; // Bắt buộc truyền subjectId
-  editingTopic?: Topic; // Thêm prop này
+  defaultSubjectId: number;
+  editingTopic?: Topic;
 }
 
 interface TopicFormData {
@@ -28,10 +28,8 @@ const TopicForm: React.FC<TopicFormProps> = ({
   defaultSubjectId,
   editingTopic,
 }) => {
-  // Tạo initial values dựa trên editingTopic
   const getInitialValues = (): TopicFormData => {
     if (editingTopic) {
-      // Edit mode - prefill với dữ liệu hiện tại
       return {
         name: editingTopic.name || "",
         description: editingTopic.description || "",
@@ -39,7 +37,6 @@ const TopicForm: React.FC<TopicFormProps> = ({
         subjectId: editingTopic.subjectId || defaultSubjectId,
       };
     } else {
-      // Create mode - giá trị mặc định
       return {
         name: "",
         description: "",
@@ -53,16 +50,19 @@ const TopicForm: React.FC<TopicFormProps> = ({
     useForm<TopicFormData>({
       initialValues: getInitialValues(),
       onSubmit: async (formData) => {
-        if (editingTopic && editingTopic.topicId) {
-          // Edit mode - gọi API update
-          await apiService.updateTopic(editingTopic.topicId, formData);
-        } else {
-          // Create mode - gọi API create
-          await apiService.createTopic(formData);
+        try {
+          if (editingTopic && editingTopic.topicId) {
+            await apiService.updateTopic(editingTopic.topicId, formData);
+          } else {
+            await apiService.createTopic(formData);
+          }
+          onTopicCreated();
+          onClose();
+          reset();
+        } catch (error) {
+          console.error("Error creating/updating topic:", error);
+          throw error; // Quan trọng: throw error để useForm xử lý
         }
-        onTopicCreated();
-        onClose();
-        reset(); // Reset về initialValues mặc định
       },
     });
 
@@ -70,32 +70,22 @@ const TopicForm: React.FC<TopicFormProps> = ({
   useEffect(() => {
     if (isOpen) {
       const newInitialValues = getInitialValues();
-
-      // Manually set values bằng cách gọi handleChange cho từng field
-      Object.keys(newInitialValues).forEach((key) => {
-        const fieldName = key as keyof TopicFormData;
-        const event = {
-          target: {
-            name: fieldName,
-            value: newInitialValues[fieldName],
-          },
-        } as React.ChangeEvent<
-          HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-        >;
-
-        handleChange(fieldName)(event);
-      });
+      reset(); // Reset form về giá trị mới
     }
   }, [editingTopic, isOpen, defaultSubjectId]);
 
   const handleCancel = () => {
-    reset(); // Reset về initialValues mặc định
+    reset();
     onClose();
   };
 
-  // Xác định title và button text dựa trên mode
-  const modalTitle = editingTopic ? "Edit Topic" : "Create New Topic";
-  const submitButtonText = editingTopic ? "Update Topic" : "Create Topic";
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSubmit(e);
+  };
+
+  const modalTitle = editingTopic ? "Edit Module" : "Create New Module";
+  const submitButtonText = editingTopic ? "Update Module" : "Create Module";
   const loadingText = editingTopic ? "Updating..." : "Creating...";
 
   return (
@@ -105,11 +95,11 @@ const TopicForm: React.FC<TopicFormProps> = ({
       title={modalTitle}
       size="md"
     >
-      <form onSubmit={handleSubmit} className="topic-form">
+      <form onSubmit={handleFormSubmit} className="topic-form">
         <div className="form-content">
           <div className="form-group">
             <label htmlFor="name" className="form-label">
-              Topic Name *
+              Module Name *
             </label>
             <input
               id="name"
@@ -117,7 +107,7 @@ const TopicForm: React.FC<TopicFormProps> = ({
               className="form-input"
               value={values.name}
               onChange={handleChange("name")}
-              placeholder="Enter topic name"
+              placeholder="Enter module name"
               required
             />
             {errors.name && <div className="form-error">{errors.name}</div>}
@@ -132,7 +122,7 @@ const TopicForm: React.FC<TopicFormProps> = ({
               className="form-textarea"
               value={values.description}
               onChange={handleChange("description")}
-              placeholder="Enter topic description"
+              placeholder="Enter module description"
               rows={3}
             />
           </div>
@@ -153,7 +143,6 @@ const TopicForm: React.FC<TopicFormProps> = ({
             </select>
           </div>
 
-          {/* Ẩn subjectId field vì đã được truyền tự động */}
           <input type="hidden" value={values.subjectId} />
         </div>
 

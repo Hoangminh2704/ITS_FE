@@ -1,215 +1,252 @@
-// components/SubjectCard/SubjectCard.tsx
-import React, { useState, useEffect } from "react";
-import "./SubjectCard.css";
-import type { Subject, Topic } from "../../types";
-import { apiService } from "../../services/apiService";
-import TopicForm from "../Forms/TopicForm";
-import SubjectForm from "../Forms/SubjectForm";
+import React, { useMemo, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import type { Subject, Topic, LearningMaterial, Question } from "../../types";
 import ConfirmModal from "../Modal/ConfirmModal";
-import TopicList from "../Topic/TopicList";
+import "./SubjectCard.css";
+import { apiService } from "../../services/apiService";
+import { getRandomCourseImage } from "../../images/data";
+import AlertModal from "../Modal/AlertModal";
 
 interface SubjectCardProps {
   subject: Subject;
   onTopicCreated: () => void;
-  onSubjectUpdated: () => void; // Thêm prop này
+  onSubjectUpdated: () => void;
+  onSubjectDeleted: () => void;
   canEdit: boolean;
+  onEditSubject?: (subject: Subject) => void;
 }
 
 const SubjectCard: React.FC<SubjectCardProps> = ({
   subject,
   onTopicCreated,
   onSubjectUpdated,
+  onSubjectDeleted,
   canEdit,
+  onEditSubject,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [showTopicForm, setShowTopicForm] = useState(false);
-  const [showSubjectForm, setShowSubjectForm] = useState(false);
+  const navigate = useNavigate();
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [topics, setTopics] = useState<Topic[]>([]);
+  const [materials, setMaterials] = useState<LearningMaterial[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(false);
-
+  const [alertModalOpen, setAlertModalOpen] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({
+    title: "",
+    message: "",
+    type: "info" as "success" | "error" | "info" | "warning",
+  });
+  const showAlert = (
+    title: string,
+    message: string,
+    type: "success" | "error" | "info" | "warning" = "info"
+  ) => {
+    setAlertConfig({ title, message, type });
+    setAlertModalOpen(true);
+  };
+  // Gọi API để lấy tất cả dữ liệu
   useEffect(() => {
-    const fetchTopics = async () => {
-      if (isExpanded && subject.subjectId) {
+    const fetchSubjectData = async () => {
+      if (!subject.subjectId) return;
+
+      try {
         setLoading(true);
-        try {
-          const topicsData = await apiService.getTopicsBySubject(
-            subject.subjectId
-          );
-          setTopics(topicsData);
-        } catch (error) {
-          console.error("Error fetching topics:", error);
-        } finally {
-          setLoading(false);
-        }
+
+        // 1. Lấy danh sách topics
+        const topicsData = await apiService.getTopicsBySubject(
+          subject.subjectId
+        );
+        setTopics(topicsData);
+
+        // 2. Lấy materials và questions cho từng topic
+        const materialsPromises = topicsData.map((topic) =>
+          topic.topicId ? apiService.getMaterialsByTopic(topic.topicId) : []
+        );
+
+        const questionsPromises = topicsData.map((topic) =>
+          topic.topicId ? apiService.getQuestionsByTopic(topic.topicId) : []
+        );
+
+        const [materialsResults, questionsResults] = await Promise.all([
+          Promise.all(materialsPromises),
+          Promise.all(questionsPromises),
+        ]);
+
+        // 3. Gộp tất cả materials và questions
+        const allMaterials = materialsResults.flat();
+        const allQuestions = questionsResults.flat();
+
+        setMaterials(allMaterials);
+        setQuestions(allQuestions);
+      } catch (error) {
+        console.error("Error fetching subject data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchTopics();
-  }, [isExpanded, subject.subjectId]);
+    fetchSubjectData();
+  }, [subject.subjectId]);
 
-  const handleAddTopic = () => {
-    setShowTopicForm(true);
+  // Sử dụng useMemo để cache image URL
+  const subjectImage = useMemo(() => {
+    return getRandomCourseImage();
+  }, [subject.subjectId]);
+
+  const handleManageSubject = () => {
+    navigate(`/teacher/course/${subject.subjectId}`);
   };
 
-  const handleEditSubject = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowSubjectForm(true);
+  const handleEditSubject = () => {
+    if (onEditSubject) {
+      onEditSubject(subject);
+    }
   };
 
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
-  const handleDeleteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowDeleteConfirm(true);
+  const handleDeleteClick = () => {
+    setDeleteModalOpen(true);
   };
 
-  const handleDeleteConfirm = async () => {
+  const handleConfirmDelete = async () => {
+    if (!subject.subjectId) return;
+
     try {
-      await apiService.deleteSubject(subject.subjectId!);
-      onSubjectUpdated();
+      await apiService.deleteSubject(subject.subjectId);
+      onSubjectDeleted();
+      showAlert("Success", "Subject deleted successfully", "success");
     } catch (error) {
-      console.error("Error deleting subject:", error);
-      alert("Failed to delete subject");
+      showAlert(
+        "Error",
+        "Failed to delete subject. Please try again.",
+        "error"
+      );
     }
   };
 
-  const handleTopicCreated = () => {
-    setShowTopicForm(false);
-    onTopicCreated();
-    // Refresh topics list
-    if (subject.subjectId) {
-      apiService.getTopicsBySubject(subject.subjectId).then(setTopics);
-    }
+  // Calculate derived data for display
+  const topicCount = topics.length;
+  const questionCount = questions.length;
+  const materialCount = materials.length;
+
+  // Generate fallback placeholder image
+  const fallbackImage = useMemo(() => {
+    const colors = [
+      "6366F1",
+      "EF4444",
+      "10B981",
+      "F59E0B",
+      "8B5CF6",
+      "EC4899",
+      "06B6D4",
+      "84CC16",
+      "F97316",
+      "8B5CF6",
+    ];
+    const index = subject.subjectId ? subject.subjectId % colors.length : 0;
+    return `https://placehold.co/400x160/${
+      colors[index]
+    }/FFFFFF?text=${encodeURIComponent(subject.name)}`;
+  }, [subject.subjectId, subject.name]);
+
+  const handleImageError = (
+    e: React.SyntheticEvent<HTMLImageElement, Event>
+  ) => {
+    e.currentTarget.src = fallbackImage;
   };
 
-  const handleSubjectUpdated = () => {
-    setShowSubjectForm(false);
-    onSubjectUpdated();
-  };
-
-  const handleContentCreated = () => {
-    // Refresh topics list when questions or materials are created
-    if (subject.subjectId) {
-      apiService.getTopicsBySubject(subject.subjectId).then(setTopics);
-    }
-  };
-
-  const getEmptyStateMessage = () => {
-    return canEdit
-      ? "No topics yet. Add your first topic!"
-      : "No topics available";
-  };
-  const handleTopicUpdated = () => {
-    // Refresh topics list when a topic is updated or deleted
-    if (subject.subjectId) {
-      apiService.getTopicsBySubject(subject.subjectId).then(setTopics);
-    }
-    onTopicCreated(); // Also notify parent if needed
-  };
+  if (loading) {
+    return (
+      <div className="subject-card loading">
+        <div className="loading-spinner">
+          <span className="material-icons spin">refresh</span>
+        </div>
+        <p>Loading {subject.name}...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="subject-card">
-      <div
-        className="subject-card-header"
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        <div className="subject-info">
-          <h3 className="subject-name">{subject.name}</h3>
+    <>
+      <div className="subject-card">
+        <img
+          alt={`Cover image for ${subject.name}`}
+          className="subject-card-image"
+          src={subjectImage}
+          onError={handleImageError}
+        />
+        <div className="subject-card-content">
+          <div className="subject-card-header">
+            <h3 className="subject-card-title">{subject.name}</h3>
+            {canEdit && (
+              <div className="subject-actions">
+                <button
+                  className="icon-btn"
+                  onClick={handleEditSubject}
+                  title="Edit subject"
+                >
+                  <span className="material-icons">edit</span>
+                </button>
+                <button
+                  className="icon-btn delete-btn"
+                  onClick={handleDeleteClick}
+                  title="Delete subject"
+                >
+                  <span className="material-icons">delete</span>
+                </button>
+              </div>
+            )}
+          </div>
+
           {subject.description && (
-            <p className="subject-description">{subject.description}</p>
+            <p className="subject-card-description">{subject.description}</p>
           )}
-        </div>
-        <div className="subject-actions">
-          <button
-            className="expand-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsExpanded(!isExpanded);
-            }}
-          >
-            <span className="material-icons">
-              {isExpanded ? "expand_less" : "expand_more"}
-            </span>
-          </button>
-          {canEdit && (
-            <button
-              className="add-topic-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleAddTopic();
-              }}
-            >
-              <span className="material-icons">add</span>
-              Add Topic
-            </button>
-          )}
-          {canEdit && (
-            <div className="subject-header-actions">
-              <button
-                className="icon-btn edit-btn"
-                onClick={handleEditSubject}
-                title="Edit subject"
-              >
-                <span className="material-icons">edit</span>
-                Edit
-              </button>
-              <button
-                className="icon-btn delete-btn"
-                onClick={handleDeleteClick}
-                title="Delete subject"
-              >
-                <span className="material-icons">delete</span>
-                Delete
-              </button>
+
+          <div className="subject-card-stats">
+            <div className="stat-item">
+              <span className="material-icons">topic</span>
+              <span>{topicCount} Topics</span>
             </div>
-          )}
+            <div className="stat-item">
+              <span className="material-icons">quiz</span>
+              <span>{questionCount} Questions</span>
+            </div>
+            <div className="stat-item">
+              <span className="material-icons">description</span>
+              <span>{materialCount} Materials</span>
+            </div>
+          </div>
+
+          <div className="subject-card-footer">
+            <button
+              className="manage-subject-btn"
+              onClick={handleManageSubject}
+            >
+              <span className="material-icons">settings</span>
+              Manage Subject
+            </button>
+          </div>
         </div>
       </div>
 
-      {isExpanded && (
-        <div className="subject-content">
-          <div className="topics-section">
-            <h4 className="section-title">Topics</h4>
-            <TopicList
-              topics={topics}
-              onContentCreated={handleContentCreated}
-              onTopicUpdated={handleTopicUpdated}
-              canEdit={canEdit}
-              loading={loading}
-              emptyStateMessage={getEmptyStateMessage()}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Topic Form Modal - chỉ hiển thị nếu có quyền edit */}
-      {canEdit && (
-        <>
-          <TopicForm
-            isOpen={showTopicForm}
-            onClose={() => setShowTopicForm(false)}
-            onTopicCreated={handleTopicCreated}
-            defaultSubjectId={subject.subjectId!}
-          />
-
-          <SubjectForm
-            isOpen={showSubjectForm}
-            onClose={() => setShowSubjectForm(false)}
-            onSubjectCreated={handleSubjectUpdated}
-            editingSubject={subject}
-          />
-          <ConfirmModal
-            isOpen={showDeleteConfirm}
-            onClose={() => setShowDeleteConfirm(false)}
-            onConfirm={handleDeleteConfirm}
-            title="Delete Subject"
-            message={`Are you sure you want to delete "${subject.name}"? This action cannot be undone and will also delete all topics, questions, and materials in this subject.`}
-            confirmText="Delete"
-            type="danger"
-          />
-        </>
-      )}
-    </div>
+      {/* Confirm Delete Modal */}
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Subject"
+        message={`Are you sure you want to delete "${subject.name}"? This action cannot be undone and all associated topics, questions, and materials will be lost.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
+      <AlertModal
+        isOpen={alertModalOpen}
+        onClose={() => setAlertModalOpen(false)}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+      />
+    </>
   );
 };
 

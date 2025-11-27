@@ -1,3 +1,4 @@
+// hooks/useForm.ts - Cập nhật reset function
 import { useState } from "react";
 
 interface UseFormProps<T> {
@@ -39,13 +40,14 @@ export function useForm<T>({ initialValues, onSubmit }: UseFormProps<T>) {
       await onSubmit(values);
     } catch (error: any) {
       console.error(error);
+      // Có thể xử lý lỗi cụ thể ở đây nếu cần
     } finally {
       setIsLoading(false);
     }
   };
 
-  const reset = () => {
-    setValues(initialValues);
+  const reset = (newValues?: T) => {
+    setValues(newValues || initialValues);
     setErrors({});
   };
 

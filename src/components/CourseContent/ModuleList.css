@@ -1,0 +1,324 @@
+.module-list-container {
+  background-color: #ffffff;
+  border: 1px solid var(--color-slate-200);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.dark .module-list-container {
+  background-color: var(--color-slate-900);
+  border-color: var(--color-slate-700);
+}
+
+.aside-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-slate-800);
+  margin-bottom: 1rem;
+}
+
+.dark .aside-title {
+  color: var(--color-slate-100);
+}
+
+.aside-btn-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.aside-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  background-color: rgba(67, 97, 238, 0.1);
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dark .aside-btn {
+  background-color: rgba(67, 97, 238, 0.2);
+}
+
+.aside-btn:hover:not(:disabled) {
+  background-color: rgba(67, 97, 238, 0.2);
+}
+
+.dark .aside-btn:hover:not(:disabled) {
+  background-color: rgba(67, 97, 238, 0.3);
+}
+
+.aside-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.aside-btn .material-symbols-outlined,
+.aside-btn .material-icons {
+  font-size: 1.25rem;
+}
+
+.module-list-content {
+  flex: 1;
+  overflow-y: auto;
+  margin-right: -0.75rem;
+  padding-right: 0.75rem;
+}
+
+.module-group + .module-group {
+  margin-top: 0.5rem;
+}
+
+.module-header {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.module-header:hover {
+  background-color: var(--color-slate-100);
+}
+
+.dark .module-header:hover {
+  background-color: var(--color-slate-800);
+}
+
+.module-header .material-symbols-outlined:first-child {
+  color: var(--color-slate-500);
+  font-size: 1.25rem;
+}
+
+.dark .module-header .material-symbols-outlined:first-child {
+  color: var(--color-slate-400);
+}
+
+.module-header .material-symbols-outlined:nth-child(2) {
+  color: var(--color-primary);
+  font-size: 1.25rem;
+}
+
+.module-header-title {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--color-slate-700);
+  margin-left: 0.5rem;
+}
+
+.dark .module-header-title {
+  color: var(--color-slate-200);
+}
+
+.module-content {
+  padding-left: 2rem;
+  margin-top: 0.25rem;
+}
+
+.module-content li {
+  list-style: none;
+}
+
+.module-content li + li {
+  margin-top: 0.25rem;
+}
+
+.empty-modules {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  color: var(--color-slate-500);
+}
+
+.dark .empty-modules {
+  color: var(--color-slate-400);
+}
+
+.empty-modules .material-icons {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-modules p {
+  font-size: 0.875rem;
+  margin: 0;
+  line-height: 1.5;
+}
+/* Thêm vào ModuleList.css */
+.module-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.module-header:hover {
+  background-color: var(--color-slate-50);
+}
+
+.dark .module-header:hover {
+  background-color: var(--color-slate-800);
+}
+
+.module-header-main {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.module-actions {
+  display: flex;
+  gap: 0.25rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.module-group:hover .module-actions {
+  opacity: 1;
+}
+
+.module-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--color-slate-500);
+  transition: all 0.2s ease;
+}
+
+.module-action-btn:hover {
+  background-color: var(--color-slate-200);
+  color: var(--color-slate-700);
+}
+
+.dark .module-action-btn:hover {
+  background-color: var(--color-slate-700);
+  color: var(--color-slate-300);
+}
+
+.module-action-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* Cập nhật existing styles */
+.module-header-title {
+  font-weight: 600;
+  color: var(--color-slate-800);
+}
+
+.dark .module-header-title {
+  color: var(--color-slate-200);
+}
+
+.empty-modules {
+  text-align: center;
+  padding: 2rem;
+  color: var(--color-slate-500);
+}
+
+.empty-modules .material-icons {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+.module-actions {
+  display: flex;
+  gap: 0.25rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.module-group:hover .module-actions {
+  opacity: 1;
+}
+
+.module-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--color-slate-500);
+  transition: all 0.2s ease;
+}
+
+.module-action-btn:hover {
+  background-color: var(--color-slate-200);
+  color: var(--color-slate-700);
+}
+
+.dark .module-action-btn:hover {
+  background-color: var(--color-slate-700);
+  color: var(--color-slate-300);
+}
+
+.module-action-btn.delete-btn {
+  color: var(--color-slate-500);
+}
+
+.module-action-btn.delete-btn:hover {
+  background-color: var(--color-red-50);
+  color: var(--color-red-600);
+}
+
+.dark .module-action-btn.delete-btn:hover {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: var(--color-red-400);
+}
+
+.module-action-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* Đảm bảo các styles khác vẫn hoạt động */
+.module-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.module-header:hover {
+  background-color: var(--color-slate-50);
+}
+
+.dark .module-header:hover {
+  background-color: var(--color-slate-800);
+}
+
+.module-header-main {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}

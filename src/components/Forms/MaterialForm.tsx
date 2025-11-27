@@ -1,18 +1,19 @@
 // components/MaterialForm/MaterialForm.tsx
-import React, { useEffect } from "react";
-
+import React, { useEffect, useState } from "react";
 import { useForm } from "../../hooks/useForm";
 import { apiService } from "../../services/apiService";
 import "./MaterialForm.css";
 import BaseModal from "../Modal/BaseModal";
-import type { LearningMaterial } from "../../types";
+import type { LearningMaterial, Topic } from "../../types";
 
 interface MaterialFormProps {
   isOpen: boolean;
   onClose: () => void;
   onMaterialCreated: () => void;
   defaultTopicId: number;
-  editingMaterial?: LearningMaterial; // Thêm prop này
+  editingMaterial?: LearningMaterial;
+  topics?: Topic[];
+  courseId?: string;
 }
 
 interface MaterialFormData {
@@ -29,11 +30,35 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
   onMaterialCreated,
   defaultTopicId,
   editingMaterial,
+  topics = [],
+  courseId,
 }) => {
-  // Tạo initial values dựa trên editingMaterial
+  const [availableTopics, setAvailableTopics] = useState<Topic[]>(topics);
+  const [loadingTopics, setLoadingTopics] = useState(false);
+
+  useEffect(() => {
+    const fetchTopics = async () => {
+      if (!courseId || topics.length > 0) return;
+
+      try {
+        setLoadingTopics(true);
+        const subjectId = parseInt(courseId);
+        const topicsData = await apiService.getTopicsBySubject(subjectId);
+        setAvailableTopics(topicsData);
+      } catch (error) {
+        console.error("Error fetching topics:", error);
+      } finally {
+        setLoadingTopics(false);
+      }
+    };
+
+    if (isOpen) {
+      fetchTopics();
+    }
+  }, [isOpen, courseId, topics.length]);
+
   const getInitialValues = (): MaterialFormData => {
     if (editingMaterial) {
-      // Edit mode - prefill với dữ liệu hiện tại
       return {
         title: editingMaterial.title || "",
         content: editingMaterial.content || "",
@@ -42,7 +67,6 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
         topicId: editingMaterial.topicId || defaultTopicId,
       };
     } else {
-      // Create mode - giá trị mặc định
       return {
         title: "",
         content: "",
@@ -57,53 +81,53 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
     useForm<MaterialFormData>({
       initialValues: getInitialValues(),
       onSubmit: async (formData) => {
-        if (editingMaterial && editingMaterial.materialId) {
-          // Edit mode - gọi API update
-          await apiService.updateLearningMaterial(
-            editingMaterial.materialId,
-            formData
-          );
-        } else {
-          // Create mode - gọi API create
-          await apiService.createLearningMaterial(formData);
+        try {
+          if (editingMaterial && editingMaterial.materialId) {
+            await apiService.updateLearningMaterial(
+              editingMaterial.materialId,
+              formData
+            );
+          } else {
+            await apiService.createLearningMaterial(formData);
+          }
+          onMaterialCreated();
+          onClose();
+          reset();
+        } catch (error) {
+          console.error("Error creating/updating material:", error);
+          // Có thể thêm thông báo lỗi cho user ở đây
         }
-        onMaterialCreated();
-        onClose();
-        reset(); // Reset về initialValues mặc định
       },
     });
 
-  // Reset form khi editingMaterial thay đổi hoặc modal mở/đóng
   useEffect(() => {
     if (isOpen) {
-      // Tạo một effect để manually update values khi dependencies thay đổi
       const newInitialValues = getInitialValues();
-
-      // Manually set values bằng cách gọi handleChange cho từng field
       Object.keys(newInitialValues).forEach((key) => {
         const fieldName = key as keyof MaterialFormData;
-        // Tạo một synthetic event để trigger handleChange
         const event = {
           target: {
             name: fieldName,
             value: newInitialValues[fieldName],
           },
-        } as React.ChangeEvent<
-          HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-        >;
+        } as React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
 
-        // Gọi handleChange cho từng field
         handleChange(fieldName)(event);
       });
     }
   }, [editingMaterial, isOpen, defaultTopicId]);
 
   const handleCancel = () => {
-    reset(); // Reset về initialValues mặc định
+    reset();
     onClose();
   };
 
-  // Xác định title và button text dựa trên mode
+  // Xử lý submit form
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    handleSubmit(e);
+  };
+
   const modalTitle = editingMaterial
     ? "Edit Learning Material"
     : "Create Learning Material";
@@ -119,8 +143,10 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
       title={modalTitle}
       size="lg"
     >
-      <form onSubmit={handleSubmit} className="material-form">
+      <form onSubmit={handleFormSubmit} className="material-form">
         <div className="form-content">
+
+
           <div className="form-group">
             <label htmlFor="title" className="form-label">
               Title *
@@ -136,6 +162,35 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
             />
             {errors.title && <div className="form-error">{errors.title}</div>}
           </div>
+          {!editingMaterial && (
+            <div className="form-group">
+              <label htmlFor="topicId" className="form-label">
+                Topic *
+              </label>
+              {loadingTopics ? (
+                <div className="loading-state">
+                  <span className="material-icons loading-spinner">refresh</span>
+                  Loading topics...
+                </div>
+              ) : (
+                <select
+                  id="topicId"
+                  className="form-select"
+                  value={values.topicId}
+                  onChange={handleChange("topicId")}
+                  required
+                >
+                  <option value="">Select a topic</option>
+                  {availableTopics.map((topic) => (
+                    <option key={topic.topicId} value={topic.topicId}>
+                      {topic.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+              {errors.topicId && <div className="form-error">{errors.topicId}</div>}
+            </div>
+          )}
 
           <div className="form-group">
             <label htmlFor="content" className="form-label">
@@ -166,6 +221,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
               <option value="article">Article</option>
               <option value="presentation">Presentation</option>
               <option value="exercise">Exercise</option>
+              <option value="quiz">Quiz</option>
               <option value="link">External Link</option>
             </select>
           </div>
@@ -185,8 +241,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
             />
           </div>
 
-          {/* Ẩn topicId field vì đã được truyền tự động */}
-          <input type="hidden" value={values.topicId} />
+          {editingMaterial && <input type="hidden" value={values.topicId} />}
         </div>
 
         <div className="form-actions">
@@ -198,7 +253,11 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
           >
             Cancel
           </button>
-          <button type="submit" className="submit-btn" disabled={isLoading}>
+          <button
+            type="submit"
+            className="submit-btn"
+            disabled={isLoading}
+          >
             {isLoading ? (
               <>
                 <span className="material-icons loading-spinner">refresh</span>

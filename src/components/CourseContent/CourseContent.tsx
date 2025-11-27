@@ -1,10 +1,257 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { InstructorHeader } from "../InstructorHeader/InstructorHeader";
+import { apiService } from "../../services/apiService";
 import "./CourseContent.css";
+import type { Lesson, Module } from "./ModuleList";
+import ModuleList from "./ModuleList";
+
+import type {
+  Topic,
+  LearningMaterial,
+  LearningMaterialResponseDTO,
+} from "../../types";
+import EditorSection from "../EditorSection/EditorSection";
 
 const CourseContentManagement: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
+
+  const [topics, setTopics] = useState<Topic[]>([]);
+  const [modules, setModules] = useState<Module[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeMaterial, setActiveMaterial] = useState<LearningMaterial>();
+  const [activeLesson, setActiveLesson] = useState<Lesson>();
+
+  // Map material type to lesson type
+  const mapMaterialTypeToLessonType = (
+    materialType?: string
+  ): "video" | "document" | "exercise" | "quiz" => {
+    if (!materialType) return "document";
+
+    switch (materialType.toLowerCase()) {
+      case "video":
+        return "video";
+      case "exercise":
+        return "exercise";
+      case "quiz":
+        return "quiz";
+      default:
+        return "document";
+    }
+  };
+
+  // Fetch topics từ backend
+  const fetchTopics = async () => {
+    if (!courseId) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const subjectId = parseInt(courseId);
+      const topicsData = await apiService.getTopicsBySubject(subjectId);
+      console.log("topicsData", topicsData);
+
+      // Convert topics từ backend sang modules format
+      const convertedModules: Module[] = await Promise.all(
+        topicsData.map(async (topic: Topic) => {
+          // Fetch materials cho từng topic
+          const materials = await apiService.getMaterialsByTopic(
+            topic.topicId!
+          );
+
+          // Convert learning materials to lessons với type assertion
+          const lessons: Lesson[] = materials.map(
+            (material: LearningMaterialResponseDTO, index: number) => {
+              // Xử lý trường hợp topicId có thể là undefined
+              const materialWithTopicId: LearningMaterial = {
+                ...material,
+                topicId: material.topicId || topic.topicId!, // Fallback to topic.topicId nếu material.topicId là undefined
+              };
+
+              return {
+                id: `lesson-${topic.topicId}-${material.materialId || index}`,
+                title: material.title || `Lesson ${index + 1}`,
+                type: mapMaterialTypeToLessonType(material.type),
+                duration: material.duration
+                  ? `${material.duration} min`
+                  : undefined,
+                materialId: material.materialId,
+              };
+            }
+          );
+
+          return {
+            id: `module-${topic.topicId}`,
+            title: topic.name || `Topic ${topic.topicId}`,
+            isExpanded: false,
+            topicId: topic.topicId,
+            lessons: lessons,
+          };
+        })
+      );
+
+      setModules(convertedModules);
+      setTopics(topicsData);
+    } catch (error) {
+      console.error("Error fetching topics:", error);
+      setModules([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch material data khi lesson được click
+  const fetchMaterialData = async (materialId?: number) => {
+    if (!materialId) return;
+
+    try {
+      const material: LearningMaterialResponseDTO =
+        await apiService.getMaterialById(materialId);
+
+      // Convert response to LearningMaterial với đầy đủ topicId
+      const materialWithTopicId: LearningMaterial = {
+        ...material,
+        topicId: material.topicId || 0, // Provide default value
+      };
+
+      setActiveMaterial(materialWithTopicId);
+    } catch (error) {
+      console.error("Error fetching material:", error);
+    }
+  };
+
+  // Fetch data khi component mount hoặc courseId thay đổi
+  useEffect(() => {
+    fetchTopics();
+  }, [courseId]);
+
+  const handleModuleToggle = (moduleId: string) => {
+    setModules(
+      modules.map((module) =>
+        module.id === moduleId
+          ? { ...module, isExpanded: !module.isExpanded }
+          : module
+      )
+    );
+  };
+
+  const handleLessonClick = (lessonId: string, materialId?: number) => {
+    // Cập nhật trạng thái active cho lesson
+    const updatedModules = modules.map((module) => ({
+      ...module,
+      lessons: module.lessons.map((lesson) => ({
+        ...lesson,
+        isActive: lesson.id === lessonId,
+      })),
+    }));
+
+    setModules(updatedModules);
+
+    // Tìm lesson active
+    const lesson = updatedModules
+      .flatMap((module) => module.lessons)
+      .find((lesson) => lesson.id === lessonId);
+
+    setActiveLesson(lesson);
+
+    // Fetch material data nếu có materialId
+    if (materialId) {
+      fetchMaterialData(materialId);
+    } else {
+      setActiveMaterial(undefined);
+    }
+  };
+
+  // Callback khi topic mới được tạo
+  const handleModuleCreated = () => {
+    fetchTopics();
+  };
+
+  // Callback khi material mới được tạo
+  const handleMaterialCreated = () => {
+    fetchTopics();
+  };
+
+  // Handle save material
+  const handleSaveMaterial = (materialData: any) => {
+    // TODO: Implement save material logic
+    console.log("Saving material:", materialData);
+  };
+
+  // Handle cancel editing
+  const handleCancelEditing = () => {
+    setActiveLesson(undefined);
+    setActiveMaterial(undefined);
+  };
+
+  if (loading) {
+    return (
+      <div className="course-mgmt-body">
+        <div className="course-mgmt-layout">
+          <InstructorHeader courseId={courseId} activeTab="Courses" />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "50vh",
+              color: "var(--color-slate-500)",
+            }}
+          >
+            <span className="material-symbols-outlined loading-spinner">
+              refresh
+            </span>
+            <span>Loading course content...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const handleMaterialUpdated = (updatedMaterial: LearningMaterial) => {
+    // Cập nhật activeMaterial với dữ liệu mới từ server
+    setActiveMaterial(updatedMaterial);
+
+    // Đồng thời cập nhật activeLesson title nếu có thay đổi
+    if (activeLesson) {
+      setActiveLesson((prev) =>
+        prev
+          ? {
+              ...prev,
+              title: updatedMaterial.title,
+            }
+          : undefined
+      );
+    }
+
+    // Refresh toàn bộ modules để cập nhật UI trong module list
+    fetchTopics();
+
+    console.log("Material updated successfully");
+  };
+  const handleModuleUpdated = () => {
+    // Refresh topics để cập nhật dữ liệu mới nhất
+    fetchTopics();
+    console.log("Module updated successfully");
+  };
+  const handleModuleDeleted = () => {
+    // Refresh topics để cập nhật dữ liệu mới nhất
+    fetchTopics();
+
+    // Clear active lesson và material nếu đang xem lesson thuộc module bị xóa
+    setActiveLesson(undefined);
+    setActiveMaterial(undefined);
+
+    console.log("Module deleted successfully");
+  };
+  const handleMaterialDeleted = () => {
+    // Refresh topics để cập nhật dữ liệu mới nhất
+    fetchTopics();
+
+    console.log("Material deleted successfully");
+  };
 
   return (
     <React.Fragment>
@@ -14,364 +261,28 @@ const CourseContentManagement: React.FC = () => {
 
           <main className="course-mgmt-main">
             <aside className="course-structure-aside">
-              <h2 className="aside-title">Course Structure</h2>
-              <div className="aside-btn-group">
-                <button className="aside-btn">
-                  <span className="material-symbols-outlined">add</span>
-                  Add Module
-                </button>
-                <button className="aside-btn">
-                  <span className="material-symbols-outlined">add</span>
-                  Add Lesson
-                </button>
-              </div>
-              <div className="module-list-container">
-                <div>
-                  <div className="module-header">
-                    <span className="material-symbols-outlined">
-                      expand_more
-                    </span>
-                    <span className="material-symbols-outlined">folder</span>
-                    <span className="module-header-title">
-                      Module 1: Introduction
-                    </span>
-                  </div>
-                  <ul className="module-content">
-                    <li>
-                      <div className="module-item">
-                        <div className="module-item-details">
-                          <span className="material-symbols-outlined icon-video">
-                            play_circle
-                          </span>
-                          <span className="module-item-title">
-                            1.1 Welcome Video
-                          </span>
-                        </div>
-                        <span className="module-item-duration">5 min</span>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="module-item">
-                        <div className="module-item-details">
-                          <span className="material-symbols-outlined">
-                            description
-                          </span>
-                          <span className="module-item-title">
-                            1.2 Course Overview
-                          </span>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <div className="module-header">
-                    <span className="material-symbols-outlined">
-                      expand_more
-                    </span>
-                    <span className="material-symbols-outlined">folder</span>
-                    <span className="module-header-title">
-                      Module 2: React Fundamentals
-                    </span>
-                  </div>
-                  <ul className="module-content">
-                    <li>
-                      <div className="module-item module-item-active">
-                        <div className="module-item-details">
-                          <span className="material-symbols-outlined icon-video">
-                            play_circle
-                          </span>
-                          <span className="module-item-title">
-                            2.1 JSX Introduction
-                          </span>
-                        </div>
-                        <span className="module-item-duration">12 min</span>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="module-item">
-                        <div className="module-item-details">
-                          <span className="material-symbols-outlined icon-video">
-                            play_circle
-                          </span>
-                          <span className="module-item-title">
-                            2.2 Components &amp; Props
-                          </span>
-                        </div>
-                        <span className="module-item-duration">18 min</span>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="module-item">
-                        <div className="module-item-details">
-                          <span className="material-symbols-outlined">
-                            code
-                          </span>
-                          <span className="module-item-title">
-                            2.3 Hands-on Exercise
-                          </span>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <div className="module-header">
-                    <span className="material-symbols-outlined">
-                      chevron_right
-                    </span>
-                    <span className="material-symbols-outlined">
-                      folder_open
-                    </span>
-                    <span className="module-header-title">
-                      Module 3: State Management
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <ModuleList
+                modules={modules}
+                onModuleToggle={handleModuleToggle}
+                onLessonClick={handleLessonClick}
+                onModuleCreated={handleModuleCreated}
+                onMaterialCreated={handleMaterialCreated}
+                onModuleUpdated={handleModuleUpdated}
+                onModuleDeleted={handleModuleDeleted}
+                courseId={courseId}
+                topics={topics} // Truyền topics xuống
+              />
             </aside>
 
-            <section className="editor-section">
-              <div className="editor-header-card">
-                <div className="editor-header-content">
-                  <div className="editor-header-title-group">
-                    <div className="editor-header-icon">
-                      <span className="material-symbols-outlined">
-                        play_circle
-                      </span>
-                    </div>
-                    <div>
-                      <h2 className="editor-title">2.1 JSX Introduction</h2>
-                      <p className="editor-subtitle">
-                        Module 2: React Fundamentals
-                      </p>
-                    </div>
-                  </div>
-                  <div className="editor-header-buttons">
-                    <button className="btn btn-secondary">
-                      Preview Course
-                    </button>
-                    <button className="btn btn-primary">Save Changes</button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="editor-body">
-                <div className="editor-content-area">
-                  <div>
-                    <label className="form-label" htmlFor="lesson-title">
-                      Lesson Title
-                    </label>
-                    <input
-                      className="form-input"
-                      id="lesson-title"
-                      type="text"
-                      defaultValue="JSX Introduction"
-                    />
-                  </div>
-                  <div>
-                    <label className="form-label">Description</label>
-                    <div className="rich-text-editor">
-                      <div className="editor-toolbar">
-                        <button className="toolbar-btn">
-                          <span className="material-symbols-outlined">
-                            format_bold
-                          </span>
-                        </button>
-                        <button className="toolbar-btn">
-                          <span className="material-symbols-outlined">
-                            format_italic
-                          </span>
-                        </button>
-                        <button className="toolbar-btn">
-                          <span className="material-symbols-outlined">
-                            format_underlined
-                          </span>
-                        </button>
-                        <button className="toolbar-btn">
-                          <span className="material-symbols-outlined">
-                            format_list_bulleted
-                          </span>
-                        </button>
-                        <button className="toolbar-btn">
-                          <span className="material-symbols-outlined">
-                            format_list_numbered
-                          </span>
-                        </button>
-                        <button className="toolbar-btn">
-                          <span className="material-symbols-outlined">
-                            link
-                          </span>
-                        </button>
-                        <button className="toolbar-btn">
-                          <span className="material-symbols-outlined">
-                            code
-                          </span>
-                        </button>
-                      </div>
-                      <div className="editor-textarea" contentEditable="true">
-                        In this lesson, you'll learn about JSX, the syntax
-                        extension for JavaScript that allows you to write
-                        HTML-like code in your React components. We'll cover: •
-                        What is JSX and why we use it • JSX syntax and rules •
-                        Embedding expressions in JSX • JSX attributes and props
-                        • Common JSX patterns and best practices. By the end of
-                        this lesson, you'll be comfortable writing JSX and
-                        understand how it transforms into regular JavaScript.
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="editor-section-title">Video Content</h3>
-                    <div className="file-drop-zone">
-                      <div className="drop-zone-icon-bg">
-                        <span className="material-symbols-outlined">
-                          videocam
-                        </span>
-                      </div>
-                      <p className="drop-zone-title">Upload Video</p>
-                      <p className="drop-zone-subtitle">
-                        Drag and drop your video file here, or click to browse
-                      </p>
-                      <div className="drop-zone-buttons">
-                        <button className="btn-file">
-                          <span className="material-symbols-outlined">
-                            upload_file
-                          </span>{" "}
-                          Upload File
-                        </button>
-                        <span
-                          className="drop-zone-subtitle"
-                          style={{ margin: 0 }}
-                        >
-                          or
-                        </span>
-                        <button className="btn-file">
-                          <span className="material-symbols-outlined">
-                            add_link
-                          </span>{" "}
-                          Add Video URL
-                        </button>
-                      </div>
-                      <p className="drop-zone-hint">
-                        Supported formats: MP4, MOV, AVI (Max 500MB)
-                      </p>
-                    </div>
-                    <div className="upload-progress-card">
-                      <div className="upload-progress-content">
-                        <span className="material-symbols-outlined">
-                          videocam
-                        </span>
-                        <div className="upload-progress-details">
-                          <div className="upload-progress-info">
-                            <p className="upload-file-name">
-                              jsx-introduction.mp4
-                            </p>
-                            <div className="upload-file-meta">
-                              <span>12:34</span>
-                              <button className="upload-delete-btn">
-                                <span className="material-symbols-outlined">
-                                  delete
-                                </span>
-                              </button>
-                            </div>
-                          </div>
-                          <p className="file-meta-2">
-                            Uploaded 2 hours ago • 45.2 MB
-                          </p>
-                          <div className="progress-bar-bg">
-                            <div
-                              className="progress-bar-fg"
-                              style={{ width: "100%" }}
-                            ></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="resource-section-header">
-                      <h3 className="editor-section-title">
-                        Additional Resources
-                      </h3>
-                      <button className="btn-add-resource">
-                        <span className="material-symbols-outlined">add</span>
-                        Add Resource
-                      </button>
-                    </div>
-                    <div className="resource-list">
-                      <div className="resource-card">
-                        <div className="resource-details">
-                          <span className="material-symbols-outlined">
-                            picture_as_pdf
-                          </span>
-                          <span className="resource-name">
-                            JSX Cheat Sheet.pdf
-                          </span>
-                        </div>
-                        <button className="resource-delete-btn">
-                          <span className="material-symbols-outlined">
-                            close
-                          </span>
-                        </button>
-                      </div>
-                      <div className="resource-card">
-                        <div className="resource-details">
-                          <span className="material-symbols-outlined icon-link">
-                            link
-                          </span>
-                          <span className="resource-name">
-                            Official React JSX Documentation
-                          </span>
-                        </div>
-                        <button className="resource-delete-btn">
-                          <span className="material-symbols-outlined">
-                            close
-                          </span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="editor-section-title">Lesson Settings</h3>
-                    <div className="settings-grid">
-                      <div>
-                        <label className="form-label" htmlFor="duration">
-                          Duration (minutes)
-                        </label>
-                        <input
-                          className="form-input"
-                          id="duration"
-                          type="number"
-                          defaultValue="12"
-                        />
-                      </div>
-                      <div>
-                        <label className="form-label" htmlFor="difficulty">
-                          Difficulty Level
-                        </label>
-                        <select className="form-select" id="difficulty">
-                          <option>Beginner</option>
-                          <option>Intermediate</option>
-                          <option>Advanced</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="editor-footer">
-                  <div className="footer-status">
-                    <span className="material-symbols-outlined">history</span>
-                    <span>Last saved 2 minutes ago</span>
-                  </div>
-                  <div className="footer-buttons">
-                    <button className="btn btn-secondary">Cancel</button>
-                    <button className="btn btn-primary">Save Lesson</button>
-                  </div>
-                </div>
-              </div>
-            </section>
+            <EditorSection
+              activeLesson={activeLesson}
+              activeMaterial={activeMaterial}
+              modules={modules}
+              onSave={handleSaveMaterial}
+              onCancel={handleCancelEditing}
+              onMaterialUpdated={handleMaterialUpdated}
+              onMaterialDeleted={handleMaterialDeleted}
+            />
           </main>
         </div>
       </div>
