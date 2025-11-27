@@ -6,17 +6,17 @@ import type {
   Topic,
   TopicRequestDTO,
   TopicResponseDTO,
-  Question,
   QuestionRequestDTO,
   QuestionResponseDTO,
-  LearningMaterial,
+  LearningMaterialCreateRequestDTO,
   LearningMaterialRequestDTO,
   LearningMaterialResponseDTO,
-  Feedback,
   FeedbackRequestDTO,
   FeedbackResponseDTO,
   UserDetail,
+  FileDownloadResponse,
 } from "../types";
+
 const IDENTITY_API_BASE = "http://localhost:8080/api/v1";
 const COURSE_API_BASE = "http://localhost:8081/api";
 
@@ -28,8 +28,16 @@ class ApiService {
       ...(token && { Authorization: `Bearer ${token}` }),
     };
   }
+
+  private getAuthHeadersMultipart(): HeadersInit {
+    const token = localStorage.getItem("its_token");
+    return {
+      ...(token && { Authorization: `Bearer ${token}` }),
+      // NOTE: KHÔNG set Content-Type cho multipart, browser sẽ tự set
+    };
+  }
+
   private async handleUnauthorized() {
-    // Chỉ redirect nếu đang ở trang cần authentication
     if (
       window.location.pathname !== "/login" &&
       window.location.pathname !== "/register"
@@ -40,6 +48,7 @@ class ApiService {
     }
     throw new Error("Unauthorized");
   }
+
   private async identityRequest(endpoint: string, options: RequestInit = {}) {
     const url = `${IDENTITY_API_BASE}${endpoint}`;
     const config = {
@@ -48,29 +57,19 @@ class ApiService {
     };
 
     const response = await fetch(url, config);
-
-    // Check for 401 Unauthorized
     if (response.status === 401) {
       return this.handleUnauthorized();
     }
-
-    // Check if response is successful
     if (!response.ok) {
       throw new Error(`API Error: ${response.status} ${response.statusText}`);
     }
-
-    // For DELETE requests and 204 No Content responses, return null
     if (response.status === 204 || options.method === "DELETE") {
       return null;
     }
-
-    // For other responses, try to parse as JSON
     const contentType = response.headers.get("content-type");
     if (contentType && contentType.includes("application/json")) {
       return response.json();
     }
-
-    // If not JSON, return as text or null
     return response.text();
   }
 
@@ -83,34 +82,122 @@ class ApiService {
 
     const response = await fetch(url, config);
 
-    // Check for 401 Unauthorized
     if (response.status === 401) {
       return this.handleUnauthorized();
     }
-
-    // Check if response is successful
     if (!response.ok) {
       throw new Error(`API Error: ${response.status} ${response.statusText}`);
     }
-
-    // For DELETE requests and 204 No Content responses, return null
     if (response.status === 204 || options.method === "DELETE") {
       return null;
     }
-
-    // For other responses, try to parse as JSON
     const contentType = response.headers.get("content-type");
     if (contentType && contentType.includes("application/json")) {
       return response.json();
     }
-
-    // If not JSON, return as text or null
     return response.text();
   }
 
-  async getAllUsers(): Promise<UserDetail[]> {
-    return this.identityRequest("/users");
+  // 🆕 MULTIPART REQUEST cho file upload
+  private async courseMultipartRequest(
+    endpoint: string,
+    formData: FormData,
+    method: string = "POST"
+  ) {
+    const url = `${COURSE_API_BASE}${endpoint}`;
+
+    const config: RequestInit = {
+      method,
+      headers: this.getAuthHeadersMultipart(),
+      body: formData,
+    };
+
+    const response = await fetch(url, config);
+
+    if (response.status === 401) {
+      return this.handleUnauthorized();
+    }
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
   }
+
+  // ========== LEARNING MATERIAL APIs với File Upload ==========
+
+  // ✅ CREATE với file upload - sử dụng LearningMaterialCreateRequestDTO
+  async createLearningMaterial(
+    data: LearningMaterialCreateRequestDTO, // 👈 Dùng Create DTO (không có file field)
+    file?: File
+  ): Promise<LearningMaterialResponseDTO> {
+    const formData = new FormData();
+
+    // Append JSON data - không cần remove file vì Create DTO không có file field
+    formData.append("material", JSON.stringify(data));
+
+    // Append file if exists
+    if (file) {
+      formData.append("file", file);
+    }
+
+    return this.courseMultipartRequest("/materials", formData, "POST");
+  }
+
+  // ✅ UPDATE với file upload - sử dụng LearningMaterialRequestDTO
+  async updateLearningMaterial(
+    materialId: number,
+    data: LearningMaterialRequestDTO, // 👈 Dùng Request DTO (có file field)
+    file?: File
+  ): Promise<LearningMaterialResponseDTO> {
+    const formData = new FormData();
+
+    // Append JSON data - remove file field từ DTO
+    const { file: _, ...materialData } = data; // Remove file từ JSON
+    formData.append("material", JSON.stringify(materialData));
+
+    // Append file if exists
+    if (file) {
+      formData.append("file", file);
+    }
+
+    return this.courseMultipartRequest(
+      `/materials/${materialId}`,
+      formData,
+      "PUT"
+    );
+  }
+
+  // ✅ GET file download URL
+  async getFileDownloadUrl(materialId: number): Promise<FileDownloadResponse> {
+    return this.courseRequest(`/materials/${materialId}/download`);
+  }
+
+  // CÁC METHOD KHÁC GIỮ NGUYÊN...
+  async deleteLearningMaterial(materialId: number): Promise<void> {
+    await this.courseRequest(`/materials/${materialId}`, {
+      method: "DELETE",
+    });
+  }
+
+  async getMaterialsByTopic(
+    topicId: number
+  ): Promise<LearningMaterialResponseDTO[]> {
+    return this.courseRequest(`/materials/topic/${topicId}`);
+  }
+
+  async getMaterialById(
+    materialId: number
+  ): Promise<LearningMaterialResponseDTO> {
+    return this.courseRequest(`/materials/${materialId}`);
+  }
+
+  // ========== CÁC APIs KHÁC GIỮ NGUYÊN ==========
+
+  async getAllUsers(): Promise<UserDetail[]> {
+    return this.identityRequest("/auth/users");
+  }
+
   // Subject APIs
   async createSubject(data: SubjectRequestDTO): Promise<SubjectResponseDTO> {
     return this.courseRequest("/subjects", {
@@ -226,44 +313,6 @@ class ApiService {
 
   async getQuestionById(questionId: number): Promise<QuestionResponseDTO> {
     return this.courseRequest(`/questions/${questionId}`);
-  }
-
-  // Learning Material APIs
-  async createLearningMaterial(
-    data: LearningMaterialRequestDTO
-  ): Promise<LearningMaterialResponseDTO> {
-    return this.courseRequest("/materials", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  }
-
-  async updateLearningMaterial(
-    materialId: number,
-    data: LearningMaterialRequestDTO
-  ): Promise<LearningMaterialResponseDTO> {
-    return this.courseRequest(`/materials/${materialId}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
-  }
-
-  async deleteLearningMaterial(materialId: number): Promise<void> {
-    await this.courseRequest(`/materials/${materialId}`, {
-      method: "DELETE",
-    });
-  }
-
-  async getMaterialsByTopic(
-    topicId: number
-  ): Promise<LearningMaterialResponseDTO[]> {
-    return this.courseRequest(`/materials/topic/${topicId}`);
-  }
-
-  async getMaterialById(
-    materialId: number
-  ): Promise<LearningMaterialResponseDTO> {
-    return this.courseRequest(`/materials/${materialId}`);
   }
 
   // Feedback APIs

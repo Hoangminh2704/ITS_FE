@@ -3,9 +3,8 @@ import { useParams } from "react-router-dom";
 import { InstructorHeader } from "../InstructorHeader/InstructorHeader";
 import { apiService } from "../../services/apiService";
 import "./CourseContent.css";
-import type { Lesson, Module } from "./ModuleList";
-import ModuleList from "./ModuleList";
-
+import type { Lesson, Module } from "./ModuleList/ModuleList";
+import ModuleList from "./ModuleList/ModuleList";
 import type {
   Topic,
   LearningMaterial,
@@ -22,7 +21,6 @@ const CourseContentManagement: React.FC = () => {
   const [activeMaterial, setActiveMaterial] = useState<LearningMaterial>();
   const [activeLesson, setActiveLesson] = useState<Lesson>();
 
-  // Map material type to lesson type
   const mapMaterialTypeToLessonType = (
     materialType?: string
   ): "video" | "document" | "exercise" | "quiz" => {
@@ -40,7 +38,6 @@ const CourseContentManagement: React.FC = () => {
     }
   };
 
-  // Fetch topics từ backend
   const fetchTopics = async () => {
     if (!courseId) {
       setLoading(false);
@@ -51,25 +48,13 @@ const CourseContentManagement: React.FC = () => {
       setLoading(true);
       const subjectId = parseInt(courseId);
       const topicsData = await apiService.getTopicsBySubject(subjectId);
-      console.log("topicsData", topicsData);
-
-      // Convert topics từ backend sang modules format
       const convertedModules: Module[] = await Promise.all(
         topicsData.map(async (topic: Topic) => {
-          // Fetch materials cho từng topic
           const materials = await apiService.getMaterialsByTopic(
             topic.topicId!
           );
-
-          // Convert learning materials to lessons với type assertion
           const lessons: Lesson[] = materials.map(
             (material: LearningMaterialResponseDTO, index: number) => {
-              // Xử lý trường hợp topicId có thể là undefined
-              const materialWithTopicId: LearningMaterial = {
-                ...material,
-                topicId: material.topicId || topic.topicId!, // Fallback to topic.topicId nếu material.topicId là undefined
-              };
-
               return {
                 id: `lesson-${topic.topicId}-${material.materialId || index}`,
                 title: material.title || `Lesson ${index + 1}`,
@@ -78,6 +63,9 @@ const CourseContentManagement: React.FC = () => {
                   ? `${material.duration} min`
                   : undefined,
                 materialId: material.materialId,
+                hasFile: !!material.fileName,
+                fileSize: material.fileSize,
+                fileType: material.contentType,
               };
             }
           );
@@ -91,7 +79,6 @@ const CourseContentManagement: React.FC = () => {
           };
         })
       );
-
       setModules(convertedModules);
       setTopics(topicsData);
     } catch (error) {
@@ -101,19 +88,15 @@ const CourseContentManagement: React.FC = () => {
       setLoading(false);
     }
   };
-
-  // Fetch material data khi lesson được click
   const fetchMaterialData = async (materialId?: number) => {
     if (!materialId) return;
 
     try {
       const material: LearningMaterialResponseDTO =
         await apiService.getMaterialById(materialId);
-
-      // Convert response to LearningMaterial với đầy đủ topicId
       const materialWithTopicId: LearningMaterial = {
         ...material,
-        topicId: material.topicId || 0, // Provide default value
+        topicId: material.topicId || 0,
       };
 
       setActiveMaterial(materialWithTopicId);
@@ -121,8 +104,6 @@ const CourseContentManagement: React.FC = () => {
       console.error("Error fetching material:", error);
     }
   };
-
-  // Fetch data khi component mount hoặc courseId thay đổi
   useEffect(() => {
     fetchTopics();
   }, [courseId]);
@@ -138,7 +119,6 @@ const CourseContentManagement: React.FC = () => {
   };
 
   const handleLessonClick = (lessonId: string, materialId?: number) => {
-    // Cập nhật trạng thái active cho lesson
     const updatedModules = modules.map((module) => ({
       ...module,
       lessons: module.lessons.map((lesson) => ({
@@ -148,15 +128,11 @@ const CourseContentManagement: React.FC = () => {
     }));
 
     setModules(updatedModules);
-
-    // Tìm lesson active
     const lesson = updatedModules
       .flatMap((module) => module.lessons)
       .find((lesson) => lesson.id === lessonId);
 
     setActiveLesson(lesson);
-
-    // Fetch material data nếu có materialId
     if (materialId) {
       fetchMaterialData(materialId);
     } else {
@@ -164,23 +140,14 @@ const CourseContentManagement: React.FC = () => {
     }
   };
 
-  // Callback khi topic mới được tạo
   const handleModuleCreated = () => {
     fetchTopics();
   };
 
-  // Callback khi material mới được tạo
   const handleMaterialCreated = () => {
     fetchTopics();
   };
 
-  // Handle save material
-  const handleSaveMaterial = (materialData: any) => {
-    // TODO: Implement save material logic
-    console.log("Saving material:", materialData);
-  };
-
-  // Handle cancel editing
   const handleCancelEditing = () => {
     setActiveLesson(undefined);
     setActiveMaterial(undefined);
@@ -211,10 +178,7 @@ const CourseContentManagement: React.FC = () => {
   }
 
   const handleMaterialUpdated = (updatedMaterial: LearningMaterial) => {
-    // Cập nhật activeMaterial với dữ liệu mới từ server
     setActiveMaterial(updatedMaterial);
-
-    // Đồng thời cập nhật activeLesson title nếu có thay đổi
     if (activeLesson) {
       setActiveLesson((prev) =>
         prev
@@ -225,32 +189,18 @@ const CourseContentManagement: React.FC = () => {
           : undefined
       );
     }
-
-    // Refresh toàn bộ modules để cập nhật UI trong module list
     fetchTopics();
-
-    console.log("Material updated successfully");
   };
   const handleModuleUpdated = () => {
-    // Refresh topics để cập nhật dữ liệu mới nhất
     fetchTopics();
-    console.log("Module updated successfully");
   };
   const handleModuleDeleted = () => {
-    // Refresh topics để cập nhật dữ liệu mới nhất
     fetchTopics();
-
-    // Clear active lesson và material nếu đang xem lesson thuộc module bị xóa
     setActiveLesson(undefined);
     setActiveMaterial(undefined);
-
-    console.log("Module deleted successfully");
   };
   const handleMaterialDeleted = () => {
-    // Refresh topics để cập nhật dữ liệu mới nhất
     fetchTopics();
-
-    console.log("Material deleted successfully");
   };
 
   return (
@@ -278,7 +228,7 @@ const CourseContentManagement: React.FC = () => {
               activeLesson={activeLesson}
               activeMaterial={activeMaterial}
               modules={modules}
-              onSave={handleSaveMaterial}
+              onSave={() => {}}
               onCancel={handleCancelEditing}
               onMaterialUpdated={handleMaterialUpdated}
               onMaterialDeleted={handleMaterialDeleted}

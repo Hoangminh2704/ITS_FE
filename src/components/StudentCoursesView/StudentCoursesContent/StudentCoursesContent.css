@@ -1,0 +1,163 @@
+/* StudentCoursesContent.css */
+.scv-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.scv-video-wrapper {
+  background-color: black;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scv-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scv-tabs {
+  border-bottom: 1px solid var(--std-border-light);
+}
+
+.dark .scv-tabs {
+  border-color: var(--std-border-dark);
+}
+
+.scv-tab-nav {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: -1px;
+}
+
+.scv-tab {
+  padding: 1rem 0.25rem;
+  border-bottom: 2px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--std-text-muted-light);
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.dark .scv-tab {
+  color: var(--std-text-muted-dark);
+}
+
+.scv-tab:hover {
+  color: var(--std-text-light);
+  border-color: var(--std-border-light);
+}
+
+.dark .scv-tab:hover {
+  color: var(--std-text-dark);
+  border-color: var(--std-border-dark);
+}
+
+.scv-tab-active {
+  border-color: var(--std-primary);
+  color: var(--std-primary);
+}
+
+.scv-tab-content {
+  padding: 2rem 0;
+  background-color: var(--std-card-light);
+  padding: 1.5rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.dark .scv-tab-content {
+  background-color: #12192a;
+}
+
+.scv-article {
+  max-width: none;
+}
+
+.scv-article h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--std-text-light);
+  margin: 0 0 0.5rem 0;
+}
+
+.dark .scv-article h2 {
+  color: var(--std-text-dark);
+}
+
+.scv-article h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--std-text-light);
+  margin: 1.5rem 0 0.75rem 0;
+}
+
+.dark .scv-article h3 {
+  color: var(--std-text-dark);
+}
+
+.scv-subtitle {
+  color: var(--std-text-muted-light);
+  margin-bottom: 1rem;
+}
+
+.dark .scv-subtitle {
+  color: var(--std-text-muted-dark);
+}
+
+.scv-article p {
+  color: var(--std-text-light);
+  line-height: 1.75;
+  margin: 1rem 0;
+}
+
+.dark .scv-article p {
+  color: var(--std-text-dark);
+}
+
+.scv-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.scv-checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.scv-check-icon {
+  color: #22c55e;
+  margin-top: 0.25rem;
+}
+
+.scv-checklist span:last-child {
+  color: var(--std-text-light);
+}
+
+.dark .scv-checklist span:last-child {
+  color: var(--std-text-dark);
+}
+
+@media (max-width: 640px) {
+  .scv-header-container {
+    padding: 0 1.5rem;
+  }
+
+  .scv-main {
+    padding: 1rem 1.5rem;
+  }
+
+  .scv-tab-nav {
+    gap: 1rem;
+    overflow-x: auto;
+  }
+}

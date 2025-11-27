@@ -1,0 +1,100 @@
+/* FileUploadSection.css */
+.file-upload-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: var(--color-slate-50);
+  border-radius: 8px;
+  border: 1px solid var(--color-slate-200);
+}
+
+.current-file-info {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-slate-200);
+  margin-bottom: 1rem;
+}
+
+.file-info-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--color-slate-700);
+}
+
+.file-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.file-name {
+  font-weight: 500;
+  color: var(--color-slate-800);
+}
+
+.file-size,
+.file-type {
+  font-size: 0.875rem;
+  color: var(--color-slate-600);
+}
+
+.file-hint {
+  font-size: 0.75rem;
+  color: var(--color-blue-600);
+  font-style: italic;
+}
+
+.file-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.file-upload-area {
+  margin-top: 1rem;
+}
+
+.file-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--color-slate-300);
+  border-radius: 6px;
+  background-color: white;
+  margin-bottom: 1rem;
+}
+
+.selected-file-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: var(--color-blue-50);
+  border: 1px solid var(--color-blue-200);
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.file-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.upload-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: var(--color-slate-100);
+  border-radius: 6px;
+  color: var(--color-slate-600);
+  font-size: 0.875rem;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.875rem;
+}

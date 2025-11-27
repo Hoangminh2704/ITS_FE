@@ -1,0 +1,139 @@
+/* StudentProfile.css */
+.profile-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.profile-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+}
+
+.profile-name {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--std-text-light);
+}
+
+.dark .profile-name {
+  color: var(--std-text-dark);
+}
+
+.profile-role {
+  font-size: 0.75rem;
+  color: var(--std-text-muted-light);
+}
+
+.dark .profile-role {
+  color: var(--std-text-muted-dark);
+}
+
+.profile-options-container {
+  position: relative;
+}
+
+.profile-options-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--std-text-muted-light);
+}
+
+.dark .profile-options-btn {
+  color: var(--std-text-muted-dark);
+}
+
+.profile-options-btn:hover {
+  color: var(--std-text-light);
+}
+
+.dark .profile-options-btn:hover {
+  color: var(--std-text-dark);
+}
+
+.profile-options-btn .material-symbols-outlined {
+  font-size: 1.25rem;
+}
+
+.logout-menu {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 140px;
+  z-index: 1000;
+  margin-bottom: 8px;
+  animation: fadeInUp 0.2s ease-out;
+}
+
+.logout-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.logout-menu-item:hover {
+  background-color: #f8fafc;
+  color: #ef4444;
+}
+
+.logout-menu-item .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  background: transparent;
+}
+
+/* Dark mode support */
+.dark .logout-menu {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.dark .logout-menu-item {
+  color: #94a3b8;
+}
+
+.dark .logout-menu-item:hover {
+  background-color: #334155;
+  color: #f87171;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

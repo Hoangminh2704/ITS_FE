@@ -1,0 +1,61 @@
+/* FeedbackFooter.css */
+@import "../../../styles/variables.css";
+
+.feedback-footer {
+  padding: 1.5rem;
+  background-color: #f8fafc;
+  border-radius: 0 0 0.5rem 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dark .feedback-footer {
+  background-color: rgba(15, 23, 42, 0.5);
+}
+
+.footer-btn-secondary {
+  font-weight: 600;
+  color: #374151;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.625rem 1rem;
+  transition: color 0.2s;
+}
+
+.dark .footer-btn-secondary {
+  color: #cbd5e1;
+}
+
+.footer-btn-secondary:hover {
+  color: #111827;
+}
+
+.dark .footer-btn-secondary:hover {
+  color: white;
+}
+
+.footer-btn-primary {
+  background-color: var(--std-primary);
+  color: white;
+  font-weight: 600;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.footer-btn-primary:hover {
+  opacity: 0.9;
+}
+
+.footer-btn-primary .material-symbols-outlined {
+  font-size: 1.25rem;
+}

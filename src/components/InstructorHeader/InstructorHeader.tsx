@@ -74,7 +74,7 @@ export const InstructorHeader: React.FC<InstructorHeaderProps> = ({
           >
             Quizzes
           </a>
-          <a
+          {/* <a
             className={`nav-link ${
               activeTab === "Students" ? "nav-link-active" : ""
             }`}
@@ -91,7 +91,7 @@ export const InstructorHeader: React.FC<InstructorHeaderProps> = ({
             onClick={(e) => handleNavClick("Analytics", e)}
           >
             Analytics
-          </a>
+          </a> */}
         </nav>
         <div className="header-right">
           <button className="notification-btn">

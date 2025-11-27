@@ -1,0 +1,96 @@
+/* StudentCoursesHeader.css */
+.scv-header {
+  background-color: var(--std-card-light);
+  border-bottom: 1px solid var(--std-border-light);
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.dark .scv-header {
+  background-color: #12192a;
+  border-color: var(--std-border-dark);
+}
+
+.scv-header-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.scv-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 4rem;
+}
+
+.scv-back-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--std-text-muted-light);
+  text-decoration: none;
+  transition: color 0.2s;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.dark .scv-back-link {
+  color: var(--std-text-muted-dark);
+}
+
+.scv-back-link:hover {
+  color: var(--std-primary);
+}
+
+.scv-nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.scv-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.scv-nav-btn-secondary {
+  background-color: var(--std-background-light);
+  color: var(--std-text-light);
+}
+
+.dark .scv-nav-btn-secondary {
+  background-color: rgba(55, 65, 81, 0.5);
+  color: var(--std-text-dark);
+}
+
+.scv-nav-btn-secondary:hover {
+  background-color: #e5e7eb;
+}
+
+.dark .scv-nav-btn-secondary:hover {
+  background-color: rgba(55, 65, 81, 0.8);
+}
+
+.scv-nav-btn-primary {
+  background-color: var(--std-primary);
+  color: white;
+}
+
+.scv-nav-btn-primary:hover {
+  background-color: #3730a3;
+}
+
+.scv-nav-btn .material-icons-outlined {
+  font-size: 1rem;
+}

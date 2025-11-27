@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import type { StudentCourse } from "../../types/studentCourse";
 import "./StudentCourseCard.css";
+import type { StudentCourse } from "../../types/studentCoursesTypes";
 
 interface CourseCardProps {
   course: StudentCourse;

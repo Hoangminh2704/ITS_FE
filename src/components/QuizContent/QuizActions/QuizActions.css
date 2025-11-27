@@ -1,0 +1,14 @@
+/* QuizActions.css */
+.quiz-actions-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-save {
+  padding: 0.5rem 1.5rem;
+}
+.btn-save .material-symbols-outlined {
+  font-size: 1.25rem;
+}

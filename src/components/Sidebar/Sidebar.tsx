@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import ConfirmModal from "../Modal/ConfirmModal";
+import ConfirmModal from "../Modal/ConfirmModal/ConfirmModal";
 import "./Sidebar.css";
 
 interface SidebarProps {
@@ -32,6 +32,9 @@ const Sidebar: React.FC<SidebarProps> = ({
     onItemClick(item);
   };
 
+  // Kiểm tra nếu user là Admin thì hiển thị menu quản lý user
+  const isAdmin = user?.role === "Admin";
+
   return (
     <>
       <aside className="sidebar">
@@ -40,7 +43,9 @@ const Sidebar: React.FC<SidebarProps> = ({
             <div className="sidebar-logo">
               <span className="material-icons">school</span>
             </div>
-            <span className="sidebar-title">ITS Teacher Panel</span>
+            <span className="sidebar-title">
+              {isAdmin ? "ITS Admin Panel" : "ITS Teacher Panel"}
+            </span>
           </div>
         </div>
 
@@ -57,6 +62,23 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <span>Dashboard</span>
               </button>
             </li>
+
+            {/* Menu chỉ hiển thị cho Admin */}
+            {/* {isAdmin && (
+              <li>
+                <button
+                  className={`nav-link ${
+                    activeItem === "user-management" ? "active" : "inactive"
+                  }`}
+                  onClick={() => handleNavClick("user-management")}
+                >
+                  <span className="material-icons">people</span>
+                  <span>User Management</span>
+                </button>
+              </li>
+            )} */}
+
+            {/* Menu cho cả Admin và Teacher */}
             {/* <li>
               <button
                 className={`nav-link ${
@@ -68,6 +90,19 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <span>Course Management</span>
               </button>
             </li> */}
+            {isAdmin && (
+              <li>
+                <button
+                  className={`nav-link ${
+                    activeItem === "notifications" ? "active" : "inactive"
+                  }`}
+                  onClick={() => handleNavClick("notifications")}
+                >
+                  <span className="material-icons">notifications</span>
+                  <span>Notifications</span>
+                </button>
+              </li>
+            )}
           </ul>
         </nav>
 

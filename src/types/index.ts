@@ -20,6 +20,7 @@ export interface UserDetail {
   fullname: string;
   role: UserRole;
   created_at: string;
+  avatar: string;
 }
 export interface UserListResponse {
   users: UserDetail[];
@@ -129,7 +130,16 @@ export interface LearningMaterial extends BaseEntity {
   topicId?: number;
   topic?: Topic;
 }
+
 export interface LearningMaterialRequestDTO {
+  title: string;
+  content?: string;
+  type?: string;
+  duration?: number;
+  topicId: number;
+  file?: File;
+}
+export interface LearningMaterialCreateRequestDTO {
   title: string;
   content?: string;
   type?: string;
@@ -144,6 +154,10 @@ export interface LearningMaterialResponseDTO {
   type?: string;
   duration?: number;
   topicId?: number;
+  fileName?: string;
+  fileUrl?: string;
+  fileSize?: number;
+  contentType?: string;
 }
 // Feedback Types
 export interface Feedback extends BaseEntity {
@@ -163,4 +177,13 @@ export interface FeedbackResponseDTO {
   content: string;
   subjectId?: number;
   studentId?: number;
+}
+
+export interface FileDownloadResponse {
+  downloadUrl: string;
+  expiresIn: string;
+}
+export interface CreateMaterialFormData {
+  material: LearningMaterialCreateRequestDTO;
+  file?: File;
 }

@@ -1,0 +1,43 @@
+/* QuizOverview.css */
+.quiz-overview-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.overview-list {
+  font-size: 0.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.overview-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--color-text-secondary-light);
+}
+.dark .overview-item {
+  color: var(--color-text-secondary-dark);
+}
+
+.overview-value {
+  font-weight: 600;
+  color: var(--color-text-primary-light);
+}
+.dark .overview-value {
+  color: var(--color-text-primary-dark);
+}
+
+.overview-tag {
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.375rem;
+  background-color: var(--color-tag-light);
+  color: var(--color-tag-text-light);
+  font-weight: 500;
+}
+.dark .overview-tag {
+  background-color: var(--color-tag-dark);
+  color: var(--color-tag-text-dark);
+}

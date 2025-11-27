@@ -1,0 +1,26 @@
+/* QuizCard.css */
+.quiz-card {
+  background-color: var(--color-surface-light);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+.dark .quiz-card {
+  background-color: var(--color-surface-dark);
+}
+
+.quiz-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.quiz-card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary-light);
+}
+.dark .quiz-card-title {
+  color: var(--color-text-primary-dark);
+}

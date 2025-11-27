@@ -2,16 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import Sidebar from "../Sidebar/Sidebar";
 import "./InstructorDashboard.css";
-import type { Question, Subject, Topic, UserDetail } from "../../types";
+import type { Question, Subject } from "../../types";
 import { apiService } from "../../services/apiService";
-import SubjectForm from "../Forms/SubjectForm";
-import SubjectsList from "../Subject/SubjectList";
-import StatsGrid from "../Stat/StatsGrid";
+import SubjectsList from "../Subject/SubjectList/SubjectList";
+import StatsGrid from "../Stat/StatGrid/StatsGrid";
+import SubjectForm from "../Forms/SubjectForm/SubjectForm";
 
 const InstructorDashboard: React.FC = () => {
   const { user } = useAuth();
   const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [topics, setTopics] = useState<Topic[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   // const [users, setUsers] = useState<UserDetail[]>([]);
   const [error, setError] = useState("");
@@ -72,7 +71,6 @@ const InstructorDashboard: React.FC = () => {
           }
         }
       }
-      console.log("allQuestions", allQuestions);
       return allQuestions;
     } catch (error) {
       console.error("Error fetching questions:", error);

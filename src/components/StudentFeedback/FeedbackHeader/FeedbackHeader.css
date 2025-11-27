@@ -1,0 +1,56 @@
+/* FeedbackHeader.css */
+@import "../../../styles/variables.css";
+
+.feedback-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--std-border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.dark .feedback-header {
+  border-color: #334155;
+}
+
+.feedback-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--std-text-light);
+  margin: 0;
+}
+
+.dark .feedback-title {
+  color: var(--std-text-dark);
+}
+
+.feedback-subtitle {
+  font-size: 0.875rem;
+  color: var(--std-text-muted-light);
+  margin-top: 0.25rem;
+}
+
+.dark .feedback-subtitle {
+  color: #94a3b8;
+}
+
+.feedback-close-btn {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: color 0.2s;
+}
+
+.dark .feedback-close-btn {
+  color: #64748b;
+}
+
+.feedback-close-btn:hover {
+  color: #4b5563;
+}
+
+.dark .feedback-close-btn:hover {
+  color: #cbd5e1;
+}

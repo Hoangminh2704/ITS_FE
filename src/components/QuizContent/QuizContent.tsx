@@ -5,17 +5,24 @@ import { InstructorHeader } from "../InstructorHeader/InstructorHeader";
 import { apiService } from "../../services/apiService";
 import type { Question } from "../../types";
 import "./QuizContent.css";
-import QuestionsList from "../Question/QuestionsList";
-import QuestionForm from "../Forms/QuestionForm";
-import ConfirmModal from "../Modal/ConfirmModal"; // Thêm import
-import AlertModal from "../Modal/AlertModal";
+// Import components
+import QuestionsList from "../Question/QuestionList/QuestionsList";
+import ConfirmModal from "../Modal/ConfirmModal/ConfirmModal";
+import AlertModal from "../Modal/AlertModal/AlertModal";
+import QuestionForm from "../Forms/QuestionForm/QuestionForm";
+import { AccessDeniedState, LoadingState } from "./QuizStates/QuizStates";
+import QuizHeader from "./QuizHeader/QuizHeader";
+import QuizTitleSection from "./QuizCard/QuizTitleSection";
+import QuizSettings from "./QuizSettings/QuizSettings";
+import QuizOverview from "./QuizOverview/QuizOverview";
+import QuizActions from "./QuizActions/QuizActions";
 
 const QuizContent: React.FC = () => {
   const navigate = useNavigate();
   const { courseId } = useParams<{ courseId: string }>();
   const location = useLocation();
 
-  const { materialId, lessonTitle, topicId } = location.state || {};
+  const { lessonTitle, topicId } = location.state || {};
 
   const [quizTitle, setQuizTitle] = useState(
     lessonTitle ? `${lessonTitle} Quiz` : ""
@@ -25,16 +32,33 @@ const QuizContent: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [showQuestionForm, setShowQuestionForm] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // Thêm state cho delete modal
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [questionToDelete, setQuestionToDelete] = useState<Question | null>(
     null
-  ); // Thêm state lưu question cần xóa
+  );
   const [alertModalOpen, setAlertModalOpen] = useState(false);
   const [alertConfig, setAlertConfig] = useState({
     title: "",
     message: "",
     type: "info" as "success" | "error" | "info" | "warning",
   });
+
+  // KIỂM TRA VALIDATION KHI COMPONENT MOUNT
+  useEffect(() => {
+    if (!topicId) {
+      showAlert(
+        "Access Denied",
+        "Please select a module or lesson first to create quiz",
+        "error"
+      );
+      // Redirect về trang course content sau 2 giây
+      const timer = setTimeout(() => {
+        navigate(`/teacher/course/${courseId}`);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [topicId, courseId, navigate]);
+
   const showAlert = (
     title: string,
     message: string,
@@ -43,6 +67,7 @@ const QuizContent: React.FC = () => {
     setAlertConfig({ title, message, type });
     setAlertModalOpen(true);
   };
+
   // Fetch existing questions khi component mount
   useEffect(() => {
     if (topicId) {
@@ -69,6 +94,14 @@ const QuizContent: React.FC = () => {
   };
 
   const handleAddQuestion = () => {
+    if (!topicId) {
+      showAlert(
+        "Error",
+        "Cannot add question without a selected module",
+        "error"
+      );
+      return;
+    }
     setEditingQuestion(null);
     setShowQuestionForm(true);
   };
@@ -79,7 +112,6 @@ const QuizContent: React.FC = () => {
   };
 
   const handleDeleteQuestion = (question: Question) => {
-    // Mở modal xác nhận thay vì xóa trực tiếp
     setQuestionToDelete(question);
     setShowDeleteModal(true);
   };
@@ -89,7 +121,6 @@ const QuizContent: React.FC = () => {
 
     try {
       await apiService.deleteQuestion(questionToDelete.questionId);
-      // Refresh questions list
       await fetchExistingQuestions();
       showAlert("Success", "Question deleted successfully", "success");
     } catch (error) {
@@ -108,7 +139,7 @@ const QuizContent: React.FC = () => {
   const handleQuestionCreated = () => {
     setShowQuestionForm(false);
     setEditingQuestion(null);
-    fetchExistingQuestions(); // Refresh the list
+    fetchExistingQuestions();
   };
 
   const handleSaveQuiz = async () => {
@@ -132,25 +163,18 @@ const QuizContent: React.FC = () => {
     }
   };
 
-  // Tính tổng points
-  const totalPoints = questions.reduce((total, q) => total + 10, 0); // Mỗi question 10 points
+  // NẾU KHÔNG CÓ TOPIC ID, HIỂN THỊ ACCESS DENIED
+  if (!topicId) {
+    return (
+      <AccessDeniedState
+        courseId={courseId}
+        onBackToCourse={handleBackToCourse}
+      />
+    );
+  }
 
   if (loading) {
-    return (
-      <div className="quiz-body">
-        <div className="quiz-layout">
-          <InstructorHeader courseId={courseId} activeTab="Quizzes" />
-          <main className="quiz-main">
-            <div className="loading-state">
-              <span className="material-symbols-outlined loading-spinner">
-                refresh
-              </span>
-              <p>Loading questions...</p>
-            </div>
-          </main>
-        </div>
-      </div>
-    );
+    return <LoadingState courseId={courseId} />;
   }
 
   return (
@@ -159,38 +183,18 @@ const QuizContent: React.FC = () => {
         <InstructorHeader courseId={courseId} activeTab="Quizzes" />
 
         <main className="quiz-main">
-          <div className="page-title-container">
-            <button
-              className="page-title"
-              onClick={handleBackToCourse}
-              style={{ background: "none", border: "none", cursor: "pointer" }}
-            >
-              <span className="material-symbols-outlined">arrow_back</span>
-              Create New Quiz
-            </button>
-            <p className="page-subtitle">
-              {lessonTitle
-                ? `Creating quiz for: ${lessonTitle}`
-                : "Design engaging quizzes and assessments for your students"}
-            </p>
-          </div>
+          <QuizHeader
+            lessonTitle={lessonTitle}
+            onBackToCourse={handleBackToCourse}
+          />
 
           <div className="quiz-grid-layout">
             <div className="quiz-main-column">
-              <div className="quiz-card">
-                <label className="form-label" htmlFor="quiz-title">
-                  Quiz Title
-                </label>
-                <input
-                  className="form-input"
-                  id="quiz-title"
-                  placeholder="e.g., Chapter 1 Final Quiz"
-                  type="text"
-                  value={quizTitle}
-                  onChange={(e) => setQuizTitle(e.target.value)}
-                  disabled={saving}
-                />
-              </div>
+              <QuizTitleSection
+                quizTitle={quizTitle}
+                onQuizTitleChange={setQuizTitle}
+                saving={saving}
+              />
 
               <div className="quiz-card">
                 <div className="quiz-card-header">
@@ -213,129 +217,16 @@ const QuizContent: React.FC = () => {
                 />
               </div>
 
-              <div className="quiz-actions-footer">
-                <button
-                  className="btn btn-secondary"
-                  onClick={handleBackToCourse}
-                  disabled={saving}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="btn btn-primary btn-save"
-                  onClick={handleSaveQuiz}
-                  disabled={saving}
-                >
-                  {saving ? (
-                    <>
-                      <span className="material-symbols-outlined loading-spinner">
-                        refresh
-                      </span>
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <span className="material-symbols-outlined">save</span>
-                      Save Quiz
-                    </>
-                  )}
-                </button>
-              </div>
+              <QuizActions
+                saving={saving}
+                onBackToCourse={handleBackToCourse}
+                onSaveQuiz={handleSaveQuiz}
+              />
             </div>
 
             <div className="quiz-sidebar-column">
-              <div className="quiz-card quiz-settings-card">
-                <h3 className="quiz-card-title">Quiz Settings</h3>
-                <div>
-                  <label className="form-label" htmlFor="time-limit">
-                    Time Limit (minutes)
-                  </label>
-                  <input
-                    className="form-input"
-                    id="time-limit"
-                    type="number"
-                    defaultValue="60"
-                    disabled={saving}
-                  />
-                </div>
-                <div>
-                  <label className="form-label" htmlFor="attempts">
-                    Attempts Allowed
-                  </label>
-                  <select
-                    className="form-select"
-                    id="attempts"
-                    defaultValue="Unlimited"
-                    disabled={saving}
-                  >
-                    <option>Unlimited</option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                  </select>
-                </div>
-                <div className="checkbox-group">
-                  <div className="checkbox-item">
-                    <input
-                      className="form-checkbox"
-                      id="randomize-questions"
-                      type="checkbox"
-                      defaultChecked
-                      disabled={saving}
-                    />
-                    <label
-                      className="checkbox-label"
-                      htmlFor="randomize-questions"
-                    >
-                      Randomize question order
-                    </label>
-                  </div>
-                  <div className="checkbox-item">
-                    <input
-                      className="form-checkbox"
-                      id="show-results"
-                      type="checkbox"
-                      defaultChecked
-                      disabled={saving}
-                    />
-                    <label className="checkbox-label" htmlFor="show-results">
-                      Show results immediately
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div className="quiz-card quiz-overview-card">
-                <h3 className="quiz-card-title">Quiz Overview</h3>
-                <div className="overview-list">
-                  <div className="overview-item">
-                    <span>Total Questions:</span>
-                    <span className="overview-value">{questions.length}</span>
-                  </div>
-                  <div className="overview-item">
-                    <span>Total Points:</span>
-                    <span className="overview-value">{totalPoints}</span>
-                  </div>
-                  <div className="overview-item">
-                    <span>Estimated Time:</span>
-                    <span className="overview-value">
-                      {Math.ceil(questions.length * 2)} min
-                    </span>
-                  </div>
-                  <div className="overview-item">
-                    <span>Difficulty:</span>
-                    <span className="overview-tag">
-                      {questions.length === 0
-                        ? "Easy"
-                        : totalPoints / questions.length > 15
-                        ? "Hard"
-                        : totalPoints / questions.length > 8
-                        ? "Medium"
-                        : "Easy"}
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <QuizSettings saving={saving} />
+              <QuizOverview questions={questions} />
             </div>
           </div>
         </main>

@@ -512,3 +512,32 @@
     gap: 1rem;
   }
 }
+/* Thêm vào cuối file Admin.css */
+
+.loading-state,
+.error-state,
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  color: var(--gray-500);
+}
+
+.error-state {
+  color: var(--red-500);
+}
+
+.retry-btn {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color var(--transition-normal);
+}
+
+.retry-btn:hover {
+  background-color: var(--primary-dark);
+}

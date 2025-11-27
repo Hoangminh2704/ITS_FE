@@ -1,27 +1,15 @@
 // EditorSection.tsx
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Thêm useParams
-import type {
-  LearningMaterial,
-  LearningMaterialRequestDTO,
-  LearningMaterialResponseDTO,
-} from "../../types";
-import "./EditorSection.css";
-import type { Lesson } from "../CourseContent/ModuleItem";
-import type { Module } from "../CourseContent/ModuleList";
+import { useParams, useNavigate } from "react-router-dom";
 import { apiService } from "../../services/apiService";
-import ConfirmModal from "../Modal/ConfirmModal";
-import AlertModal from "../Modal/AlertModal";
-
-interface EditorSectionProps {
-  activeLesson?: Lesson;
-  activeMaterial?: LearningMaterial;
-  modules: Module[];
-  onSave: (materialData: any) => void;
-  onCancel: () => void;
-  onMaterialUpdated?: (updatedMaterial: LearningMaterial) => void;
-  onMaterialDeleted?: () => void;
-}
+import ConfirmModal from "../Modal/ConfirmModal/ConfirmModal";
+import AlertModal from "../Modal/AlertModal/AlertModal";
+import EditorHeader from "./EditorHeader/EditorHeader";
+import "./EditorSection.css";
+import type { EditorSectionProps } from "../../types/EditorSectionTypes";
+import FileUploadSection from "./FileUploadSection/FileUploadSection";
+import LessonContentSection from "./LessonContentSection/LessonContentSection";
+import EditorFooter from "./EditorFooter/EditorFooter";
 
 const EditorSection: React.FC<EditorSectionProps> = ({
   activeLesson,
@@ -32,14 +20,27 @@ const EditorSection: React.FC<EditorSectionProps> = ({
   onMaterialUpdated,
   onMaterialDeleted,
 }) => {
-  const { courseId } = useParams<{ courseId: string }>(); // Lấy courseId từ URL params
+  const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
+
   const [alertModalOpen, setAlertModalOpen] = useState(false);
   const [alertConfig, setAlertConfig] = useState({
     title: "",
     message: "",
     type: "info" as "success" | "error" | "info" | "warning",
   });
+
+  const [formData, setFormData] = useState({
+    title: "",
+    content: "",
+    type: "document",
+    duration: 0,
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
   const showAlert = (
     title: string,
     message: string,
@@ -48,15 +49,6 @@ const EditorSection: React.FC<EditorSectionProps> = ({
     setAlertConfig({ title, message, type });
     setAlertModalOpen(true);
   };
-
-  const [formData, setFormData] = useState({
-    title: "",
-    content: "",
-    type: "document",
-    duration: 0,
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   // Cập nhật form data khi activeMaterial thay đổi
   useEffect(() => {
@@ -75,6 +67,8 @@ const EditorSection: React.FC<EditorSectionProps> = ({
         duration: parseInt(activeLesson.duration?.replace(" min", "") || "0"),
       });
     }
+    // Reset selected file khi material thay đổi
+    setSelectedFile(null);
   }, [activeMaterial, activeLesson]);
 
   const handleInputChange = (field: string, value: string | number) => {
@@ -82,6 +76,34 @@ const EditorSection: React.FC<EditorSectionProps> = ({
       ...prev,
       [field]: value,
     }));
+  };
+
+  const handleFileChange = (file: File | null) => {
+    setSelectedFile(file);
+
+    // Auto-detect type từ file extension
+    if (file && activeMaterial) {
+      const extension = file.name.split(".").pop()?.toLowerCase();
+      const typeMap: { [key: string]: string } = {
+        pdf: "pdf",
+        mp4: "video",
+        mov: "video",
+        avi: "video",
+        doc: "document",
+        docx: "document",
+        ppt: "presentation",
+        pptx: "presentation",
+        txt: "article",
+        md: "article",
+      };
+
+      if (extension && typeMap[extension]) {
+        setFormData((prev) => ({
+          ...prev,
+          type: typeMap[extension],
+        }));
+      }
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -103,7 +125,7 @@ const EditorSection: React.FC<EditorSectionProps> = ({
         0;
 
       // Tạo update data
-      const updateData: LearningMaterialRequestDTO = {
+      const updateData: any = {
         title: formData.title,
         content: formData.content,
         type: formData.type,
@@ -111,16 +133,18 @@ const EditorSection: React.FC<EditorSectionProps> = ({
         topicId: topicId,
       };
 
-      // Gọi API update
+      // Gọi API update - TÍCH HỢP CẢ FILE MỚI NẾU CÓ
       await apiService.updateLearningMaterial(
         activeMaterial.materialId,
-        updateData
+        updateData,
+        selectedFile || undefined
       );
 
-      // Fetch lại material mới nhất từ server để đảm bảo dữ liệu đồng bộ
-      const freshMaterial: LearningMaterialResponseDTO =
-        await apiService.getMaterialById(activeMaterial.materialId);
-      const fullUpdatedMaterial: LearningMaterial = {
+      // Fetch lại material mới nhất từ server
+      const freshMaterial = await apiService.getMaterialById(
+        activeMaterial.materialId
+      );
+      const fullUpdatedMaterial = {
         ...freshMaterial,
         topicId: topicId,
       };
@@ -133,16 +157,37 @@ const EditorSection: React.FC<EditorSectionProps> = ({
       // Gọi onSave callback hiện tại
       onSave(updateData);
 
-      showAlert("Success", "Material updated successfully", "success");
+      // Reset selected file sau khi save thành công
+      setSelectedFile(null);
+
+      // Hiển thị thông báo phù hợp
+      if (selectedFile) {
+        showAlert("Success", "Lesson and file updated successfully", "success");
+      } else {
+        showAlert("Success", "Lesson updated successfully", "success");
+      }
     } catch (error) {
-      showAlert(
-        "Error",
-        "Failed to update material. Please try again.",
-        "error"
-      );
+      showAlert("Error", "Failed to update lesson. Please try again.", "error");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDownloadFile = async () => {
+    if (!activeMaterial?.materialId) return;
+
+    try {
+      const downloadInfo = await apiService.getFileDownloadUrl(
+        activeMaterial.materialId
+      );
+      window.open(downloadInfo.downloadUrl, "_blank");
+    } catch (error) {
+      showAlert("Error", "Failed to download file. Please try again.", "error");
+    }
+  };
+
+  const handleRemoveSelectedFile = () => {
+    setSelectedFile(null);
   };
 
   const handleDeleteClick = () => {
@@ -196,126 +241,28 @@ const EditorSection: React.FC<EditorSectionProps> = ({
   return (
     <>
       <section className="editor-section">
-        <div className="editor-header-card">
-          <div className="editor-header-content">
-            <div className="editor-header-title-group">
-              <div className="editor-header-icon">
-                <span className="material-symbols-outlined">
-                  {activeLesson?.type === "video"
-                    ? "play_circle"
-                    : activeLesson?.type === "exercise"
-                    ? "code"
-                    : activeLesson?.type === "quiz"
-                    ? "quiz"
-                    : "description"}
-                </span>
-              </div>
-              <div>
-                <h2 className="editor-title">
-                  {activeLesson?.title || "Select a lesson"}
-                </h2>
-                <p className="editor-subtitle">
-                  {activeModule?.title || "No module selected"}
-                </p>
-              </div>
-            </div>
-
-            <div className="editor-header-buttons">
-              <button
-                className="btn btn-danger"
-                disabled={!activeLesson}
-                onClick={handleDeleteClick}
-                title="Delete this lesson"
-              >
-                <span className="material-symbols-outlined">delete</span>
-                Delete Lesson
-              </button>
-              <button
-                className="btn btn-primary"
-                disabled={!activeLesson}
-                onClick={handleCreateQuiz}
-              >
-                <span className="material-symbols-outlined">quiz</span>
-                Create Quiz
-              </button>
-            </div>
-          </div>
-        </div>
+        <EditorHeader
+          activeLesson={activeLesson}
+          activeModule={activeModule}
+          onDeleteClick={handleDeleteClick}
+          onCreateQuiz={handleCreateQuiz}
+        />
 
         <div className="editor-body">
           {activeLesson ? (
             <div className="editor-content-area">
-              <div>
-                <label className="form-label" htmlFor="lesson-title">
-                  Lesson Title
-                </label>
-                <input
-                  className="form-input"
-                  id="lesson-title"
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) => handleInputChange("title", e.target.value)}
-                />
-              </div>
+              <FileUploadSection
+                activeMaterial={activeMaterial}
+                selectedFile={selectedFile}
+                onFileChange={handleFileChange}
+                onDownloadFile={handleDownloadFile}
+                onRemoveSelectedFile={handleRemoveSelectedFile}
+              />
 
-              <div>
-                <label className="form-label">Description</label>
-                <div className="rich-text-editor">
-                  <textarea
-                    className="editor-textarea"
-                    value={formData.content}
-                    onChange={(e) =>
-                      handleInputChange("content", e.target.value)
-                    }
-                    placeholder="Add your lesson content here..."
-                    rows={10}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <h3 className="editor-section-title">Lesson Settings</h3>
-                <div className="settings-grid">
-                  <div>
-                    <label className="form-label" htmlFor="duration">
-                      Duration (minutes)
-                    </label>
-                    <input
-                      className="form-input"
-                      id="duration"
-                      type="number"
-                      value={formData.duration}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "duration",
-                          parseInt(e.target.value) || 0
-                        )
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className="form-label" htmlFor="type">
-                      Material Type
-                    </label>
-                    <select
-                      className="form-select"
-                      id="type"
-                      value={formData.type}
-                      onChange={(e) =>
-                        handleInputChange("type", e.target.value)
-                      }
-                    >
-                      <option value="pdf">PDF</option>
-                      <option value="video">Video</option>
-                      <option value="article">Article</option>
-                      <option value="presentation">Presentation</option>
-                      <option value="exercise">Exercise</option>
-                      <option value="quiz">Quiz</option>
-                      <option value="link">External Link</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
+              <LessonContentSection
+                formData={formData}
+                onInputChange={handleInputChange}
+              />
             </div>
           ) : (
             <div
@@ -347,29 +294,14 @@ const EditorSection: React.FC<EditorSectionProps> = ({
             </div>
           )}
 
-          <div className="editor-footer">
-            <div className="footer-buttons">
-              <button className="btn btn-secondary" onClick={onCancel}>
-                Cancel
-              </button>
-              <button
-                className="btn btn-primary"
-                disabled={!activeLesson || isLoading}
-                onClick={handleSave}
-              >
-                {isLoading ? (
-                  <>
-                    <span className="material-symbols-outlined loading-spinner">
-                      refresh
-                    </span>
-                    Saving...
-                  </>
-                ) : (
-                  "Save Lesson"
-                )}
-              </button>
-            </div>
-          </div>
+          <EditorFooter
+            activeLesson={activeLesson}
+            isLoading={isLoading}
+            formData={formData}
+            selectedFile={selectedFile}
+            onCancel={onCancel}
+            onSave={handleSave}
+          />
         </div>
       </section>
 
@@ -379,7 +311,7 @@ const EditorSection: React.FC<EditorSectionProps> = ({
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
         title="Delete Lesson"
-        message={`Are you sure you want to delete "${activeLesson?.title}"? This action cannot be undone.`}
+        message={`Are you sure you want to delete "${activeLesson?.title}"? This action cannot be undone and will also delete the associated file.`}
         confirmText="Delete"
         cancelText="Cancel"
         type="danger"

@@ -1,0 +1,95 @@
+/* StudentHeader.css */
+.student-header {
+  height: 5rem;
+  flex-shrink: 0;
+  background-color: var(--std-card-light);
+  border-bottom: 1px solid var(--std-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+}
+
+.dark .student-header {
+  background-color: var(--std-card-dark);
+  border-color: var(--std-border-dark);
+}
+
+.searchbar-container {
+  flex: 1;
+  max-width: 32rem;
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--std-text-muted-light);
+}
+
+.dark .search-icon {
+  color: var(--std-text-muted-dark);
+}
+
+.search-input {
+  width: 100%;
+  padding-left: 2.5rem;
+  padding-right: 1rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  background-color: var(--std-background-light);
+  border: 1px solid var(--std-border-light);
+  border-radius: 0.5rem;
+  color: var(--std-text-light);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.dark .search-input {
+  background-color: var(--std-background-dark);
+  border-color: var(--std-border-dark);
+  color: var(--std-text-dark);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--std-primary);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.header-action-btn {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--std-text-muted-light);
+}
+
+.dark .header-action-btn {
+  color: var(--std-text-muted-dark);
+}
+
+.header-action-btn:hover {
+  color: var(--std-text-light);
+}
+
+.dark .header-action-btn:hover {
+  color: var(--std-text-dark);
+}
+
+.notification-dot {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: #ef4444;
+  border-radius: 9999px;
+}
