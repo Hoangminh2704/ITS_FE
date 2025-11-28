@@ -99,7 +99,15 @@ const SubjectForm: React.FC<SubjectFormProps> = ({
   return (
     <div className={overlayClass} onClick={handleCancel}>
       <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            overflow: "hidden",
+          }}
+        >
           <div className="modal-header">
             <h2>{editingSubject ? "Edit Subject" : "Create New Subject"}</h2>
             <button type="button" className="close-btn" onClick={handleCancel}>
@@ -151,7 +159,6 @@ const SubjectForm: React.FC<SubjectFormProps> = ({
                   <div className="upload-text">
                     <label htmlFor="file-upload">Upload Image</label>
                     <input
-                      title="cloud_upload"
                       id="file-upload"
                       name="file-upload"
                       type="file"

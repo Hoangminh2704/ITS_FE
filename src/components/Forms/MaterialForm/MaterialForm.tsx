@@ -1,9 +1,7 @@
-// components/MaterialForm/MaterialForm.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useForm } from "../../../hooks/useForm";
 import { apiService } from "../../../services/apiService";
-import "./MaterialForm.css";
-import BaseModal from "../../Modal/BaseModal/BaseModal";
+import "./MaterialForm.css"; // Import file SCSS mới
 import type {
   LearningMaterial,
   Topic,
@@ -42,6 +40,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
   const [loadingTopics, setLoadingTopics] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchTopics = async () => {
@@ -96,14 +95,14 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
           }
 
           if (editingMaterial && editingMaterial.materialId) {
-            // UPDATE material - có thể có file mới hoặc không
+            // UPDATE material
             await apiService.updateLearningMaterial(
               editingMaterial.materialId,
               formData as LearningMaterialRequestDTO,
               selectedFile || undefined
             );
           } else {
-            // CREATE material - bắt buộc có file
+            // CREATE material
             await apiService.createLearningMaterial(
               formData as LearningMaterialCreateRequestDTO,
               selectedFile!
@@ -124,6 +123,9 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
     reset();
     setSelectedFile(null);
     setFileError("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   useEffect(() => {
@@ -181,11 +183,21 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
     }
   };
 
+  // Kích hoạt input file ẩn khi click vào vùng upload
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setFileError("");
     handleSubmit(e);
   };
+
+  // Class điều khiển animation
+  const overlayClass = isOpen
+    ? "material-modal-overlay open"
+    : "material-modal-overlay";
 
   const modalTitle = editingMaterial
     ? "Edit Learning Material"
@@ -193,165 +205,228 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
   const submitButtonText = editingMaterial
     ? "Update Material"
     : "Create Material";
-  const loadingText = editingMaterial ? "Updating..." : "Creating...";
 
   return (
-    <BaseModal
-      isOpen={isOpen}
-      onClose={handleCancel}
-      title={modalTitle}
-      size="lg"
-    >
-      <form onSubmit={handleFormSubmit} className="material-form">
-        <div className="form-content">
-          <div className="form-group">
-            <label htmlFor="title" className="form-label">
-              Title *
-            </label>
-            <input
-              id="title"
-              type="text"
-              className="form-input"
-              value={values.title}
-              onChange={handleChange("title")}
-              placeholder="Enter material title"
-              required
-            />
-            {errors.title && <div className="form-error">{errors.title}</div>}
+    <div className={overlayClass} onClick={handleCancel}>
+      <div
+        className="material-modal-container"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <form
+          onSubmit={handleFormSubmit}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            overflow: "hidden", // Thêm dòng này
+          }}
+        >
+          {/* Header */}
+          <div className="modal-header">
+            <h2>{modalTitle}</h2>
+            <button type="button" className="close-btn" onClick={handleCancel}>
+              <span className="material-symbols-outlined">close</span>
+            </button>
           </div>
 
-          {!editingMaterial && (
+          {/* Body */}
+          <div className="modal-body">
+            {/* Title Field */}
             <div className="form-group">
-              <label htmlFor="file" className="form-label">
-                File *
+              <label htmlFor="title">
+                Title <span className="required">*</span>
               </label>
               <input
-                id="file"
-                type="file"
-                className="form-input"
-                onChange={handleFileChange}
-                accept=".pdf,.mp4,.mov,.avi,.doc,.docx,.ppt,.pptx"
-                required={!editingMaterial}
+                id="title"
+                name="title"
+                type="text"
+                value={values.title}
+                onChange={handleChange("title")}
+                placeholder="e.g. Introduction to React Hooks"
+                required
               />
-              {selectedFile && (
-                <div className="file-info">
-                  <span className="material-icons">description</span>
-                  {selectedFile.name} (
-                  {(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
-                </div>
-              )}
-              {fileError && <div className="form-error">{fileError}</div>}
+              {errors.title && <div className="form-error">{errors.title}</div>}
             </div>
-          )}
 
-          {!editingMaterial && (
+            {/* File Upload Area */}
+            {!editingMaterial && (
+              <div className="form-group">
+                <label>
+                  Material File <span className="required">*</span>
+                </label>
+                <div
+                  className={`upload-area ${selectedFile ? "has-file" : ""}`}
+                  onClick={handleUploadClick}
+                >
+                  <input
+                    ref={fileInputRef}
+                    id="file"
+                    type="file"
+                    onChange={handleFileChange}
+                    accept=".pdf,.mp4,.mov,.avi,.doc,.docx,.ppt,.pptx"
+                    className="sr-only"
+                    style={{ display: "none" }}
+                    required={!editingMaterial}
+                  />
+
+                  {selectedFile ? (
+                    <div className="file-preview">
+                      <span className="material-icons">description</span>
+                      <div className="file-info">
+                        <div>{selectedFile.name}</div>
+                        <div className="upload-hint">
+                          {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                        </div>
+                      </div>
+                      <span
+                        className="material-symbols-outlined"
+                        style={{
+                          marginLeft: "auto",
+                          color: "var(--color-green-500)",
+                        }}
+                      >
+                        check_circle
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="upload-content">
+                      <div className="upload-icon-bg">
+                        <span
+                          className="material-symbols-outlined"
+                          style={{ fontSize: "2rem" }}
+                        >
+                          cloud_upload
+                        </span>
+                      </div>
+                      <div className="upload-text">
+                        <span>Click to upload</span> or drag and drop
+                      </div>
+                      <p className="upload-hint">
+                        PDF, Video, PPT, Word (Max 50MB)
+                      </p>
+                    </div>
+                  )}
+                </div>
+                {fileError && <div className="form-error">{fileError}</div>}
+              </div>
+            )}
+
+            {/* Topic Selection */}
+            {!editingMaterial && (
+              <div className="form-group">
+                <label htmlFor="topicId">
+                  Topic <span className="required">*</span>
+                </label>
+                {loadingTopics ? (
+                  <div className="loading-state">
+                    <span className="material-icons loading-spinner">
+                      refresh
+                    </span>
+                    Loading topics...
+                  </div>
+                ) : (
+                  <select
+                    id="topicId"
+                    name="topicId"
+                    value={values.topicId}
+                    onChange={handleChange("topicId")}
+                    required
+                  >
+                    <option value="">Select a topic</option>
+                    {availableTopics.map((topic) => (
+                      <option key={topic.topicId} value={topic.topicId}>
+                        {topic.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                {errors.topicId && (
+                  <div className="form-error">{errors.topicId}</div>
+                )}
+              </div>
+            )}
+
+            {/* Description / Content */}
             <div className="form-group">
-              <label htmlFor="topicId" className="form-label">
-                Topic *
-              </label>
-              {loadingTopics ? (
-                <div className="loading-state">
+              <label htmlFor="content">Content / Description</label>
+              <textarea
+                id="content"
+                name="content"
+                value={values.content}
+                onChange={handleChange("content")}
+                placeholder="Brief description of the material..."
+                rows={3}
+              />
+            </div>
+
+            {/* Type & Duration Row */}
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="type">Material Type</label>
+                <select
+                  id="type"
+                  name="type"
+                  value={values.type}
+                  onChange={handleChange("type")}
+                >
+                  <option value="pdf">PDF</option>
+                  <option value="video">Video</option>
+                  <option value="article">Article</option>
+                  <option value="presentation">Presentation</option>
+                  <option value="exercise">Exercise</option>
+                  <option value="quiz">Quiz</option>
+                  <option value="link">External Link</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="duration">Duration (minutes)</label>
+                <input
+                  id="duration"
+                  name="duration"
+                  type="number"
+                  value={values.duration}
+                  onChange={handleChange("duration")}
+                  placeholder="e.g. 15"
+                  min="0"
+                />
+              </div>
+            </div>
+
+            {editingMaterial && <input type="hidden" value={values.topicId} />}
+          </div>
+
+          {/* Footer */}
+          <div className="modal-footer">
+            <button
+              type="button"
+              className="btn-cancel"
+              onClick={handleCancel}
+              disabled={isLoading}
+            >
+              Cancel
+            </button>
+            <button type="submit" className="btn-submit" disabled={isLoading}>
+              {isLoading ? (
+                <>
                   <span className="material-icons loading-spinner">
                     refresh
                   </span>
-                  Loading topics...
-                </div>
+                  <span>{editingMaterial ? "Updating..." : "Creating..."}</span>
+                </>
               ) : (
-                <select
-                  id="topicId"
-                  className="form-select"
-                  value={values.topicId}
-                  onChange={handleChange("topicId")}
-                  required
-                >
-                  <option value="">Select a topic</option>
-                  {availableTopics.map((topic) => (
-                    <option key={topic.topicId} value={topic.topicId}>
-                      {topic.name}
-                    </option>
-                  ))}
-                </select>
+                <>
+                  <span className="material-symbols-outlined">
+                    {editingMaterial ? "save" : "add"}
+                  </span>
+                  <span>{submitButtonText}</span>
+                </>
               )}
-              {errors.topicId && (
-                <div className="form-error">{errors.topicId}</div>
-              )}
-            </div>
-          )}
-
-          <div className="form-group">
-            <label htmlFor="content" className="form-label">
-              Content
-            </label>
-            <textarea
-              id="content"
-              className="form-textarea"
-              value={values.content}
-              onChange={handleChange("content")}
-              placeholder="Enter material content or description"
-              rows={4}
-            />
+            </button>
           </div>
-
-          <div className="form-group">
-            <label htmlFor="type" className="form-label">
-              Material Type
-            </label>
-            <select
-              id="type"
-              className="form-select"
-              value={values.type}
-              onChange={handleChange("type")}
-            >
-              <option value="pdf">PDF</option>
-              <option value="video">Video</option>
-              <option value="article">Article</option>
-              <option value="presentation">Presentation</option>
-              <option value="exercise">Exercise</option>
-              <option value="quiz">Quiz</option>
-              <option value="link">External Link</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="duration" className="form-label">
-              Duration (minutes)
-            </label>
-            <input
-              id="duration"
-              type="number"
-              className="form-input"
-              value={values.duration}
-              onChange={handleChange("duration")}
-              placeholder="Enter estimated duration in minutes"
-              min="0"
-            />
-          </div>
-
-          {editingMaterial && <input type="hidden" value={values.topicId} />}
-        </div>
-
-        <div className="form-actions">
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="cancel-btn"
-            disabled={isLoading}
-          >
-            Cancel
-          </button>
-          <button type="submit" className="submit-btn" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <span className="material-icons loading-spinner">refresh</span>
-                {loadingText}
-              </>
-            ) : (
-              submitButtonText
-            )}
-          </button>
-        </div>
-      </form>
-    </BaseModal>
+        </form>
+      </div>
+    </div>
   );
 };
 
