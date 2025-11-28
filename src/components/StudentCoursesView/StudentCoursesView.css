@@ -1,4 +1,6 @@
-/* StudentCoursesLayout.css */
+/* StudentCoursesView.css */
+@import "../../styles/variables.css";
+
 .student-courses-view {
   font-family: "Inter", sans-serif;
   min-height: 100vh;
@@ -30,5 +32,32 @@
 @media (min-width: 1024px) {
   .scv-grid {
     grid-template-columns: 1fr 2fr;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  gap: 1rem;
+  color: var(--std-text-muted-light);
+}
+
+.dark .loading-container {
+  color: var(--std-text-muted-dark);
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }

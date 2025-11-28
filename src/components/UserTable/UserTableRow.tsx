@@ -40,7 +40,6 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
   };
 
   const getAvatarUrl = (name: string, email: string) => {
-    // Tạo avatar placeholder dựa trên tên và email
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(
       name
     )}&background=random`;

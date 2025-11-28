@@ -1,10 +1,17 @@
+// components/InstructorHeader/InstructorHeader.tsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./InstructorHeader.css";
 
 interface InstructorHeaderProps {
   courseId?: string;
-  activeTab?: "Dashboard" | "Courses" | "Quizzes" | "Students" | "Analytics";
+  activeTab?:
+    | "Dashboard"
+    | "Courses"
+    | "Quizzes"
+    | "Students"
+    | "Analytics"
+    | "Feedback";
 }
 
 export const InstructorHeader: React.FC<InstructorHeaderProps> = ({
@@ -21,10 +28,21 @@ export const InstructorHeader: React.FC<InstructorHeaderProps> = ({
         navigate("/teacher");
         break;
       case "Courses":
-        navigate(`/teacher/course/${courseId}`);
+        if (courseId) {
+          navigate(`/teacher/course/${courseId}`);
+        } else {
+          navigate("/teacher");
+        }
         break;
       case "Quizzes":
-        navigate(`/teacher/course/${courseId}/quiz/create`);
+        if (courseId) {
+          navigate(`/teacher/course/${courseId}/quiz/create`);
+        }
+        break;
+      case "Feedback":
+        if (courseId) {
+          navigate(`/teacher/course/${courseId}/feedback`);
+        }
         break;
       default:
         break;
@@ -74,24 +92,15 @@ export const InstructorHeader: React.FC<InstructorHeaderProps> = ({
           >
             Quizzes
           </a>
-          {/* <a
-            className={`nav-link ${
-              activeTab === "Students" ? "nav-link-active" : ""
-            }`}
-            href="#"
-            onClick={(e) => handleNavClick("Students", e)}
-          >
-            Students
-          </a>
           <a
             className={`nav-link ${
-              activeTab === "Analytics" ? "nav-link-active" : ""
+              activeTab === "Feedback" ? "nav-link-active" : ""
             }`}
             href="#"
-            onClick={(e) => handleNavClick("Analytics", e)}
+            onClick={(e) => handleNavClick("Feedback", e)}
           >
-            Analytics
-          </a> */}
+            Feedback
+          </a>
         </nav>
         <div className="header-right">
           <button className="notification-btn">

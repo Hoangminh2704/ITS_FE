@@ -5,7 +5,6 @@ import { InstructorHeader } from "../InstructorHeader/InstructorHeader";
 import { apiService } from "../../services/apiService";
 import type { Question } from "../../types";
 import "./QuizContent.css";
-// Import components
 import QuestionsList from "../Question/QuestionList/QuestionsList";
 import ConfirmModal from "../Modal/ConfirmModal/ConfirmModal";
 import AlertModal from "../Modal/AlertModal/AlertModal";
@@ -43,7 +42,6 @@ const QuizContent: React.FC = () => {
     type: "info" as "success" | "error" | "info" | "warning",
   });
 
-  // KIỂM TRA VALIDATION KHI COMPONENT MOUNT
   useEffect(() => {
     if (!topicId) {
       showAlert(
@@ -51,7 +49,6 @@ const QuizContent: React.FC = () => {
         "Please select a module or lesson first to create quiz",
         "error"
       );
-      // Redirect về trang course content sau 2 giây
       const timer = setTimeout(() => {
         navigate(`/teacher/course/${courseId}`);
       }, 2000);
@@ -68,7 +65,6 @@ const QuizContent: React.FC = () => {
     setAlertModalOpen(true);
   };
 
-  // Fetch existing questions khi component mount
   useEffect(() => {
     if (topicId) {
       fetchExistingQuestions();
@@ -163,7 +159,6 @@ const QuizContent: React.FC = () => {
     }
   };
 
-  // NẾU KHÔNG CÓ TOPIC ID, HIỂN THỊ ACCESS DENIED
   if (!topicId) {
     return (
       <AccessDeniedState
@@ -232,7 +227,6 @@ const QuizContent: React.FC = () => {
         </main>
       </div>
 
-      {/* Question Form Modal */}
       <QuestionForm
         isOpen={showQuestionForm}
         onClose={() => {
@@ -244,7 +238,6 @@ const QuizContent: React.FC = () => {
         editingQuestion={editingQuestion || undefined}
       />
 
-      {/* Confirm Delete Modal */}
       <ConfirmModal
         isOpen={showDeleteModal}
         onClose={handleCancelDelete}

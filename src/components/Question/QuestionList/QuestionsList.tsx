@@ -7,7 +7,7 @@ import type { Question } from "../../../types";
 interface QuestionsListProps {
   questions: Question[];
   onEditQuestion: (question: Question) => void;
-  onDeleteQuestion: (question: Question) => void; // Thay đổi từ questionId sang question
+  onDeleteQuestion: (question: Question) => void;
   saving?: boolean;
 }
 
@@ -38,7 +38,7 @@ const QuestionsList: React.FC<QuestionsListProps> = ({
           hintContent={question.hintContent}
           correctAnswer={question.correctAnswer}
           onEdit={() => onEditQuestion(question)}
-          onDelete={() => onDeleteQuestion(question)} // Truyền cả question object
+          onDelete={() => onDeleteQuestion(question)}
         />
       ))}
     </div>

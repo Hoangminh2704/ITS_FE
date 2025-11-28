@@ -29,10 +29,8 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   defaultTopicId,
   editingQuestion,
 }) => {
-  // Tạo initial values dựa trên editingQuestion
   const getInitialValues = (): QuestionFormData => {
     if (editingQuestion) {
-      // Edit mode - prefill với dữ liệu hiện tại
       return {
         text: editingQuestion.text || "",
         type: editingQuestion.type || "multiple_choice",
@@ -41,7 +39,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
         topicId: editingQuestion.topicId || defaultTopicId,
       };
     } else {
-      // Create mode - giá trị mặc định
       return {
         text: "",
         type: "multiple_choice",
@@ -57,29 +54,21 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       initialValues: getInitialValues(),
       onSubmit: async (formData) => {
         if (editingQuestion && editingQuestion.questionId) {
-          // Edit mode - gọi API update
           await apiService.updateQuestion(editingQuestion.questionId, formData);
         } else {
-          // Create mode - gọi API create
           await apiService.createQuestion(formData);
         }
         onQuestionCreated();
         onClose();
-        reset(); // Reset về initialValues mặc định
+        reset();
       },
     });
 
-  // Reset form khi editingQuestion thay đổi hoặc modal mở/đóng
   useEffect(() => {
     if (isOpen) {
-      // Tạo một effect để manually update values khi dependencies thay đổi
       const newInitialValues = getInitialValues();
-
-      // Manually set values bằng cách gọi handleChange cho từng field
-      // Hoặc nếu useForm không hỗ trợ, chúng ta cần tìm cách khác
       Object.keys(newInitialValues).forEach((key) => {
         const fieldName = key as keyof QuestionFormData;
-        // Tạo một synthetic event để trigger handleChange
         const event = {
           target: {
             name: fieldName,
@@ -89,21 +78,16 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
           HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
         >;
 
-        // Gọi handleChange cho từng field
         handleChange(fieldName)(event);
       });
-
-      // Reset errors
-      // Bạn có thể cần thêm cách để reset errors nếu hook không tự làm
     }
   }, [editingQuestion, isOpen, defaultTopicId]);
 
   const handleCancel = () => {
-    reset(); // Reset về initialValues mặc định
+    reset();
     onClose();
   };
 
-  // Xác định title và button text dựa trên mode
   const modalTitle = editingQuestion ? "Edit Question" : "Create New Question";
   const submitButtonText = editingQuestion
     ? "Update Question"

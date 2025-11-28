@@ -2,26 +2,43 @@
 import React from "react";
 import CriteriaItem from "./CriteriaItem";
 import "./CriteriaSection.css";
-const CriteriaSection: React.FC = () => {
+
+interface CriteriaData {
+  contentQuality: number;
+  instructorGuidance: number;
+  practicalApplication: number;
+}
+
+interface CriteriaSectionProps {
+  criteriaData: CriteriaData;
+  onCriteriaChange: (criteria: string, value: number) => void;
+}
+
+const CriteriaSection: React.FC<CriteriaSectionProps> = ({
+  criteriaData,
+  onCriteriaChange,
+}) => {
   return (
     <div className="criteria-section">
       <CriteriaItem
         id="content-quality"
         label="Content Quality"
-        defaultValue={25}
-        filledStars={2}
+        value={criteriaData.contentQuality}
+        onValueChange={(value) => onCriteriaChange("contentQuality", value)}
       />
       <CriteriaItem
         id="instructor-guidance"
         label="Instructor Guidance"
-        defaultValue={25}
-        filledStars={2}
+        value={criteriaData.instructorGuidance}
+        onValueChange={(value) => onCriteriaChange("instructorGuidance", value)}
       />
       <CriteriaItem
         id="practical-application"
         label="Practical Application"
-        defaultValue={25}
-        filledStars={1}
+        value={criteriaData.practicalApplication}
+        onValueChange={(value) =>
+          onCriteriaChange("practicalApplication", value)
+        }
       />
     </div>
   );

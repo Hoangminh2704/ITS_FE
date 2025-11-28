@@ -27,16 +27,13 @@ const UserTableWrapper: React.FC<UserTableWrapperProps> = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
-  // Lọc users dựa trên search query và role filter
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
       user.fullname.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase());
 
-    // Fix: So sánh đúng với role_name từ API
     let matchesRole = true;
     if (roleFilter !== "All Roles") {
-      // Chuyển đổi cả hai về lowercase để so sánh không phân biệt hoa thường
       const userRole = user.role.role_name.toLowerCase();
       const filterRole = roleFilter.toLowerCase();
       matchesRole = userRole === filterRole;
@@ -45,7 +42,6 @@ const UserTableWrapper: React.FC<UserTableWrapperProps> = ({
     return matchesSearch && matchesRole;
   });
 
-  // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
@@ -68,7 +64,6 @@ const UserTableWrapper: React.FC<UserTableWrapperProps> = ({
       startPage = Math.max(1, endPage - maxVisiblePages + 1);
     }
 
-    // Previous button
     pages.push(
       <li key="prev">
         <button
@@ -81,7 +76,6 @@ const UserTableWrapper: React.FC<UserTableWrapperProps> = ({
       </li>
     );
 
-    // First page and ellipsis
     if (startPage > 1) {
       pages.push(
         <li key={1}>
@@ -102,7 +96,6 @@ const UserTableWrapper: React.FC<UserTableWrapperProps> = ({
       }
     }
 
-    // Page numbers
     for (let i = startPage; i <= endPage; i++) {
       pages.push(
         <li key={i}>
@@ -116,7 +109,6 @@ const UserTableWrapper: React.FC<UserTableWrapperProps> = ({
       );
     }
 
-    // Last page and ellipsis
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
         pages.push(
@@ -137,7 +129,6 @@ const UserTableWrapper: React.FC<UserTableWrapperProps> = ({
       );
     }
 
-    // Next button
     pages.push(
       <li key="next">
         <button
@@ -157,7 +148,6 @@ const UserTableWrapper: React.FC<UserTableWrapperProps> = ({
     return pages;
   };
 
-  // Reset to page 1 when search or filter changes
   React.useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, roleFilter]);

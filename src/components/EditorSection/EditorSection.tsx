@@ -50,7 +50,6 @@ const EditorSection: React.FC<EditorSectionProps> = ({
     setAlertModalOpen(true);
   };
 
-  // Cập nhật form data khi activeMaterial thay đổi
   useEffect(() => {
     if (activeMaterial) {
       setFormData({
@@ -67,7 +66,6 @@ const EditorSection: React.FC<EditorSectionProps> = ({
         duration: parseInt(activeLesson.duration?.replace(" min", "") || "0"),
       });
     }
-    // Reset selected file khi material thay đổi
     setSelectedFile(null);
   }, [activeMaterial, activeLesson]);
 
@@ -81,7 +79,6 @@ const EditorSection: React.FC<EditorSectionProps> = ({
   const handleFileChange = (file: File | null) => {
     setSelectedFile(file);
 
-    // Auto-detect type từ file extension
     if (file && activeMaterial) {
       const extension = file.name.split(".").pop()?.toLowerCase();
       const typeMap: { [key: string]: string } = {
@@ -116,7 +113,6 @@ const EditorSection: React.FC<EditorSectionProps> = ({
 
     setIsLoading(true);
     try {
-      // Tìm topicId từ modules
       const topicId =
         activeMaterial.topicId ||
         modules.find((module) =>
@@ -124,7 +120,6 @@ const EditorSection: React.FC<EditorSectionProps> = ({
         )?.topicId ||
         0;
 
-      // Tạo update data
       const updateData: any = {
         title: formData.title,
         content: formData.content,
@@ -133,14 +128,11 @@ const EditorSection: React.FC<EditorSectionProps> = ({
         topicId: topicId,
       };
 
-      // Gọi API update - TÍCH HỢP CẢ FILE MỚI NẾU CÓ
       await apiService.updateLearningMaterial(
         activeMaterial.materialId,
         updateData,
         selectedFile || undefined
       );
-
-      // Fetch lại material mới nhất từ server
       const freshMaterial = await apiService.getMaterialById(
         activeMaterial.materialId
       );
@@ -149,18 +141,13 @@ const EditorSection: React.FC<EditorSectionProps> = ({
         topicId: topicId,
       };
 
-      // Gọi callback với dữ liệu mới nhất
       if (onMaterialUpdated) {
         onMaterialUpdated(fullUpdatedMaterial);
       }
 
-      // Gọi onSave callback hiện tại
       onSave(updateData);
 
-      // Reset selected file sau khi save thành công
       setSelectedFile(null);
-
-      // Hiển thị thông báo phù hợp
       if (selectedFile) {
         showAlert("Success", "Lesson and file updated successfully", "success");
       } else {
@@ -224,7 +211,6 @@ const EditorSection: React.FC<EditorSectionProps> = ({
       return;
     }
 
-    // Chuyển đến trang quiz creation với thông tin material
     navigate(`/teacher/course/${courseId}/quiz/create`, {
       state: {
         materialId: activeMaterial.materialId,

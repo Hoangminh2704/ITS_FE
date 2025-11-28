@@ -22,7 +22,6 @@ export function useForm<T>({ initialValues, onSubmit }: UseFormProps<T>) {
         ...prev,
         [field]: e.target.value,
       }));
-      // Clear error when user starts typing
       if (errors[field]) {
         setErrors((prev) => ({
           ...prev,
@@ -40,7 +39,6 @@ export function useForm<T>({ initialValues, onSubmit }: UseFormProps<T>) {
       await onSubmit(values);
     } catch (error: any) {
       console.error(error);
-      // Có thể xử lý lỗi cụ thể ở đây nếu cần
     } finally {
       setIsLoading(false);
     }

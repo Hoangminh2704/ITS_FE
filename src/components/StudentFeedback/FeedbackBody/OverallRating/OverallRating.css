@@ -55,3 +55,18 @@
 .dark .rating-hint {
   color: #64748b;
 }
+.star-filled {
+  color: #fbbf24 !important;
+  font-variation-settings: "FILL" 1 !important;
+}
+/* Thêm vào CriteriaItem.css */
+.criteria-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  min-width: 40px;
+}
+
+.dark .criteria-value {
+  color: #9ca3af;
+}

@@ -86,3 +86,178 @@
     grid-template-columns: repeat(3, 1fr);
   }
 }
+/* StudentContent.css - Additional styles for search */
+.search-results-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--std-background-light);
+  border-radius: 0.5rem;
+  border: 1px solid var(--std-border-light);
+}
+
+.dark .search-results-info {
+  background-color: var(--std-background-dark);
+  border-color: var(--std-border-dark);
+}
+
+.search-results-info p {
+  margin: 0;
+  color: var(--std-text-muted-light);
+  font-size: 0.875rem;
+}
+
+.dark .search-results-info p {
+  color: var(--std-text-muted-dark);
+}
+
+.clear-search-btn {
+  padding: 0.375rem 0.75rem;
+  background-color: transparent;
+  color: var(--std-primary);
+  border: 1px solid var(--std-primary);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.clear-search-btn:hover {
+  background-color: var(--std-primary);
+  color: white;
+}
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.loading-spinner {
+  font-size: 3rem;
+  color: var(--std-primary);
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-state p {
+  color: var(--std-text-muted-light);
+  font-size: 1rem;
+}
+
+.dark .loading-state p {
+  color: var(--std-text-muted-dark);
+}
+
+/* Error state */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 3rem;
+  color: #ef4444;
+  margin-bottom: 1rem;
+}
+
+.error-state p {
+  color: var(--std-text-muted-light);
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.dark .error-state p {
+  color: var(--std-text-muted-dark);
+}
+
+.retry-btn {
+  padding: 0.5rem 1.5rem;
+  background-color: var(--std-primary);
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.retry-btn:hover {
+  background-color: #3730a3;
+}
+
+/* Empty state */
+.empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  color: var(--std-text-muted-light);
+  margin-bottom: 1rem;
+}
+
+.dark .empty-icon {
+  color: var(--std-text-muted-dark);
+}
+
+.empty-state p {
+  color: var(--std-text-muted-light);
+  font-size: 1.125rem;
+  margin-bottom: 1.5rem;
+  max-width: 24rem;
+}
+
+.dark .empty-state p {
+  color: var(--std-text-muted-dark);
+}
+
+/* Clear search button in header */
+.searchbar-container .clear-search-btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--std-text-muted-light);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.searchbar-container .clear-search-btn:hover {
+  background-color: var(--std-background-light);
+  color: var(--std-text-light);
+}
+
+.dark .searchbar-container .clear-search-btn:hover {
+  background-color: var(--std-background-dark);
+  color: var(--std-text-dark);
+}

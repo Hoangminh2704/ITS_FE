@@ -4,8 +4,8 @@ import "./ModuleList.css";
 import ModuleItem from "../ModuleItem/ModuleItem";
 import type { Topic } from "../../../types";
 import MaterialForm from "../../Forms/MaterialForm/MaterialForm";
-import ConfirmModal from "../../Modal/ConfirmModal/ConfirmModal"; // Thêm import
-import { apiService } from "../../../services/apiService"; // Thêm import
+import ConfirmModal from "../../Modal/ConfirmModal/ConfirmModal";
+import { apiService } from "../../../services/apiService";
 import AlertModal from "../../Modal/AlertModal/AlertModal";
 import TopicForm from "../../Forms/TopicForm/TopicForm";
 
@@ -34,7 +34,7 @@ interface ModuleListProps {
   onModuleCreated: () => void;
   onMaterialCreated: () => void;
   onModuleUpdated?: () => void;
-  onModuleDeleted?: () => void; // Thêm callback cho delete module
+  onModuleDeleted?: () => void;
   courseId?: string;
   topics?: Topic[];
 }
@@ -55,8 +55,8 @@ const ModuleList: React.FC<ModuleListProps> = ({
   const [showMaterialForm, setShowMaterialForm] = React.useState(false);
   const [selectedTopicId, setSelectedTopicId] = React.useState<number>();
   const [editingTopic, setEditingTopic] = React.useState<Topic>();
-  const [deleteModalOpen, setDeleteModalOpen] = React.useState(false); // State cho delete modal
-  const [deletingTopic, setDeletingTopic] = React.useState<Topic>(); // Topic đang xóa
+  const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
+  const [deletingTopic, setDeletingTopic] = React.useState<Topic>();
   const [alertModalOpen, setAlertModalOpen] = useState(false);
   const [alertConfig, setAlertConfig] = useState({
     title: "",
@@ -100,7 +100,6 @@ const ModuleList: React.FC<ModuleListProps> = ({
       setDeleteModalOpen(false);
       setDeletingTopic(undefined);
 
-      // Gọi callback để refresh data
       if (onModuleDeleted) {
         onModuleDeleted();
       }
@@ -178,7 +177,7 @@ const ModuleList: React.FC<ModuleListProps> = ({
                   onClick={() => {
                     onModuleToggle(module.id);
                     if (onModuleClick) {
-                      onModuleClick(module); // Gọi callback khi click module
+                      onModuleClick(module);
                     }
                   }}
                 >

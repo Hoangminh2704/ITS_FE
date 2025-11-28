@@ -49,7 +49,6 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
     setAlertConfig({ title, message, type });
     setAlertModalOpen(true);
   };
-  // Gọi API để lấy tất cả dữ liệu
   useEffect(() => {
     const fetchSubjectData = async () => {
       if (!subject.subjectId) return;
@@ -57,13 +56,11 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
       try {
         setLoading(true);
 
-        // 1. Lấy danh sách topics
         const topicsData = await apiService.getTopicsBySubject(
           subject.subjectId
         );
         setTopics(topicsData);
 
-        // 2. Lấy materials và questions cho từng topic
         const materialsPromises = topicsData.map((topic) =>
           topic.topicId ? apiService.getMaterialsByTopic(topic.topicId) : []
         );
@@ -77,7 +74,6 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
           Promise.all(questionsPromises),
         ]);
 
-        // 3. Gộp tất cả materials và questions
         const allMaterials = materialsResults.flat();
         const allQuestions = questionsResults.flat();
 
@@ -93,7 +89,6 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
     fetchSubjectData();
   }, [subject.subjectId]);
 
-  // Sử dụng useMemo để cache image URL
   const subjectImage = useMemo(() => {
     return getRandomCourseImage();
   }, [subject.subjectId]);
@@ -128,12 +123,10 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
     }
   };
 
-  // Calculate derived data for display
   const topicCount = topics.length;
   const questionCount = questions.length;
   const materialCount = materials.length;
 
-  // Generate fallback placeholder image
   const fallbackImage = useMemo(() => {
     const colors = [
       "6366F1",
@@ -233,7 +226,6 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
         </div>
       </div>
 
-      {/* Confirm Delete Modal */}
       <ConfirmModal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}

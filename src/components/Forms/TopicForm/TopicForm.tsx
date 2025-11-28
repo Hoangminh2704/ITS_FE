@@ -61,15 +61,14 @@ const TopicForm: React.FC<TopicFormProps> = ({
           reset();
         } catch (error) {
           console.error("Error creating/updating topic:", error);
-          throw error; // Quan trọng: throw error để useForm xử lý
+          throw error;
         }
       },
     });
 
-  // Reset form khi editingTopic thay đổi hoặc modal mở/đóng
   useEffect(() => {
     if (isOpen) {
-      reset(); // Reset form về giá trị mới
+      reset();
     }
   }, [editingTopic, isOpen, defaultSubjectId]);
 

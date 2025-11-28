@@ -38,7 +38,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
-  // Tính toán derived values
   const isTeacher = user?.role === "Teacher" || user?.role === "Admin";
   const isAdmin = user?.role === "Admin";
 
@@ -47,13 +46,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return roles.includes(user.role);
   };
 
-  // Hàm validate token
   const validateToken = (token: string): boolean => {
     try {
       const decodedToken = parseJwt(token);
       const currentTime = Date.now() / 1000;
 
-      // Kiểm tra token expiration
       if (decodedToken.exp && decodedToken.exp < currentTime) {
         return false;
       }
@@ -70,13 +67,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const savedToken = localStorage.getItem("its_token");
 
       if (savedUser && savedToken) {
-        // Validate token trước khi khôi phục state
         if (validateToken(savedToken)) {
           const parsedUser = JSON.parse(savedUser);
           setUser(parsedUser);
           setIsAuthenticated(true);
 
-          // Nếu đang ở trang login, redirect đến trang chính
           if (
             window.location.pathname === "/login" ||
             window.location.pathname === "/"
@@ -96,7 +91,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             }
           }
         } else {
-          // Token không hợp lệ, clear storage
           localStorage.removeItem("its_token");
           localStorage.removeItem("its_user");
           if (window.location.pathname !== "/login") {
@@ -104,7 +98,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           }
         }
       } else {
-        // Không có token, redirect đến login nếu đang ở trang cần auth
         const publicRoutes = ["/login", "/register"];
         if (!publicRoutes.includes(window.location.pathname)) {
           navigate("/login");
@@ -139,7 +132,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         throw new Error("No token received");
       }
 
-      // Decode JWT to get user information
       const decodedToken = parseJwt(token);
 
       const userData: User = {
@@ -154,7 +146,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       localStorage.setItem("its_user", JSON.stringify(userData));
       localStorage.setItem("its_token", token);
 
-      // Navigate based on role
       switch (userData.role) {
         case "Admin":
           navigate("/admin");

@@ -16,22 +16,22 @@ const StudentSidebar: React.FC<StudentSidebarProps> = ({ onLogout, user }) => {
         </div>
       </div>
       <nav className="sidebar-nav">
-        <a className="sidebar-link" href="#">
+        {/* <a className="sidebar-link" href="#">
           <span className="material-symbols-outlined">dashboard</span>
           Dashboard
-        </a>
+        </a> */}
         <a className="sidebar-link sidebar-link-active" href="#">
           <span className="material-symbols-outlined">import_contacts</span>
           My Learning
         </a>
-        <a className="sidebar-link" href="#">
+        {/* <a className="sidebar-link" href="#">
           <span className="material-symbols-outlined">calendar_month</span>
           Schedule
         </a>
         <a className="sidebar-link" href="#">
           <span className="material-symbols-outlined">show_chart</span>
           Progress
-        </a>
+        </a> */}
       </nav>
       <div className="sidebar-footer">
         <StudentProfile user={user} onLogout={onLogout} />

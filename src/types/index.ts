@@ -57,7 +57,7 @@ export interface Subject extends BaseEntity {
   subjectId?: number;
   name: string;
   description?: string;
-  topics?: Topic[]; // Thêm relation topics
+  topics?: Topic[];
 }
 export interface SubjectRequestDTO {
   name: string;

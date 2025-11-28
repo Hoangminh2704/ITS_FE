@@ -21,7 +21,6 @@ const InstructorDashboard: React.FC = () => {
     undefined
   );
 
-  // Check if user has permission to create subjects
   const canCreateSubject = user?.role === "Teacher";
 
   useEffect(() => {
@@ -31,7 +30,6 @@ const InstructorDashboard: React.FC = () => {
         const subjectsData = await apiService.getSubjects();
         setSubjects(subjectsData);
 
-        // Fetch all questions for stats
         const allQuestions = await getAllQuestions(subjectsData);
         setQuestions(allQuestions);
         // const usersData = await apiService.getAllUsers();
@@ -47,20 +45,16 @@ const InstructorDashboard: React.FC = () => {
     fetchStats();
   }, []);
 
-  // Hàm để lấy tất cả questions từ tất cả subjects và topics
   const getAllQuestions = async (
     subjectsData: Subject[]
   ): Promise<Question[]> => {
     try {
       const allQuestions: Question[] = [];
 
-      // Duyệt qua từng subject và lấy questions từ các topics
       for (const subject of subjectsData) {
         if (subject.subjectId) {
-          // Lấy topics của subject
           const topics = await apiService.getTopicsBySubject(subject.subjectId);
 
-          // Duyệt qua từng topic và lấy questions
           for (const topic of topics) {
             if (topic.topicId) {
               const questions = await apiService.getQuestionsByTopic(
@@ -87,7 +81,6 @@ const InstructorDashboard: React.FC = () => {
       const subjectsData = await apiService.getSubjects();
       setSubjects(subjectsData);
 
-      // Refresh questions khi subjects được refresh
       const allQuestions = await getAllQuestions(subjectsData);
       setQuestions(allQuestions);
     } catch (err: any) {
@@ -95,26 +88,22 @@ const InstructorDashboard: React.FC = () => {
     }
   };
 
-  // Thêm hàm xử lý edit subject
   const handleEditSubject = (subject: Subject) => {
     setEditingSubject(subject);
     setSubjectFormOpen(true);
   };
 
-  // Thêm hàm xử lý close form
   const handleCloseForm = () => {
     setSubjectFormOpen(false);
     setEditingSubject(undefined);
   };
 
-  // Thêm hàm xử lý create subject
   const handleCreateSubject = (e: React.MouseEvent) => {
     e.stopPropagation();
     setEditingSubject(undefined);
     setSubjectFormOpen(true);
   };
 
-  // Thêm hàm xử lý sau khi subject được tạo/cập nhật
   const handleSubjectCreated = () => {
     refreshSubjects();
     handleCloseForm();
@@ -171,13 +160,11 @@ const InstructorDashboard: React.FC = () => {
 
   return (
     <div className="dashboard-layout">
-      {/* Sidebar Component */}
       <Sidebar
         activeItem={activeSidebarItem}
         onItemClick={handleSidebarItemClick}
       />
 
-      {/* Main Content */}
       <main className="main-content">
         <header className="dashboard-header">
           <div>
@@ -194,10 +181,8 @@ const InstructorDashboard: React.FC = () => {
           </div>
         </header>
 
-        {/* Stats Grid Component */}
         <StatsGrid stats={calculateStats()} />
 
-        {/* Subjects Section */}
         <section>
           <div className="course-header">
             <h2 className="course-title">My Courses</h2>
@@ -245,7 +230,6 @@ const InstructorDashboard: React.FC = () => {
         </section>
       </main>
 
-      {/* Subject Form Modal - chỉ hiển thị nếu có quyền */}
       {canCreateSubject && (
         <SubjectForm
           isOpen={isSubjectFormOpen}

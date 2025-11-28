@@ -19,7 +19,6 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ user, onLogout }) => {
     setShowLogoutMenu(false);
   };
 
-  // Safe user name access
   const userName = user?.name || "Student";
   const userInitial = user?.name?.charAt(0) || "U";
 
@@ -57,7 +56,6 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ user, onLogout }) => {
         </div>
       </div>
 
-      {/* Overlay để đóng menu khi click ra ngoài */}
       {showLogoutMenu && (
         <div className="menu-overlay" onClick={handleClickOutside} />
       )}

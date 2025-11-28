@@ -11,6 +11,7 @@ import StudentDashboard from "./pages/StudentDashboard/StudentDashboard";
 import StudentCoursesView from "./pages/StudentCoursesView/StudentCoursesView";
 import Register from "./pages/Register/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
+import FeedbackPage from "./components/Feedback/FeedbackPage";
 
 function App() {
   return (
@@ -48,6 +49,14 @@ function App() {
             element={
               <ProtectedRoute requiredRole="Teacher">
                 <QuizContentPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/course/:courseId/feedback"
+            element={
+              <ProtectedRoute requiredRole="Teacher">
+                <FeedbackPage />
               </ProtectedRoute>
             }
           />

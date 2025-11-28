@@ -1,20 +1,31 @@
 // CriteriaItem.tsx
 import React from "react";
 import "./CriteriaItem.css";
+
 interface CriteriaItemProps {
   id: string;
   label: string;
-  defaultValue: number;
-  filledStars: number;
+  value: number;
+  onValueChange: (value: number) => void;
 }
 
 const CriteriaItem: React.FC<CriteriaItemProps> = ({
   id,
   label,
-  defaultValue,
-  filledStars,
+  value,
+  onValueChange,
 }) => {
-  const renderStars = () => {
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = parseInt(e.target.value);
+    onValueChange(newValue);
+  };
+
+  const calculateFilledStars = (value: number): number => {
+    // Convert percentage (0-100) to stars (0-5)
+    return Math.round((value / 100) * 5);
+  };
+
+  const renderStars = (filledStars: number) => {
     const stars = [];
     for (let i = 0; i < 5; i++) {
       const starClass = i < filledStars ? "star-filled" : "";
@@ -26,6 +37,8 @@ const CriteriaItem: React.FC<CriteriaItemProps> = ({
     }
     return stars;
   };
+
+  const filledStars = calculateFilledStars(value);
 
   return (
     <div className="criteria-item">
@@ -39,9 +52,18 @@ const CriteriaItem: React.FC<CriteriaItemProps> = ({
           max="100"
           min="0"
           type="range"
-          defaultValue={defaultValue}
+          value={value}
+          onChange={handleSliderChange}
         />
-        <div className="criteria-stars">{renderStars()}</div>
+        <div className="criteria-stars">
+          {renderStars(filledStars)}
+          <span
+            className="criteria-value"
+            style={{ marginLeft: "8px", fontSize: "12px", color: "#6b7280" }}
+          >
+            {value}%
+          </span>
+        </div>
       </div>
     </div>
   );

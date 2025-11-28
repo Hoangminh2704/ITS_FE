@@ -1,7 +1,20 @@
 // ThoughtsSection.tsx
 import React from "react";
 import "./ThoughtsSection.css";
-const ThoughtsSection: React.FC = () => {
+
+interface ThoughtsSectionProps {
+  thoughts: string;
+  onThoughtsChange: (thoughts: string) => void;
+}
+
+const ThoughtsSection: React.FC<ThoughtsSectionProps> = ({
+  thoughts,
+  onThoughtsChange,
+}) => {
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onThoughtsChange(e.target.value);
+  };
+
   return (
     <div className="thoughts-section">
       <label className="thoughts-label" htmlFor="thoughts">
@@ -12,6 +25,8 @@ const ThoughtsSection: React.FC = () => {
         id="thoughts"
         placeholder="Tell us more about your experience with this course..."
         rows={4}
+        value={thoughts}
+        onChange={handleTextareaChange}
       ></textarea>
       <p className="thoughts-hint">
         Your feedback is valuable and helps us improve

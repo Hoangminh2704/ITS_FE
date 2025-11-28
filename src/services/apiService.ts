@@ -33,7 +33,6 @@ class ApiService {
     const token = localStorage.getItem("its_token");
     return {
       ...(token && { Authorization: `Bearer ${token}` }),
-      // NOTE: KHÔNG set Content-Type cho multipart, browser sẽ tự set
     };
   }
 
@@ -98,7 +97,6 @@ class ApiService {
     return response.text();
   }
 
-  // 🆕 MULTIPART REQUEST cho file upload
   private async courseMultipartRequest(
     endpoint: string,
     formData: FormData,
@@ -124,19 +122,14 @@ class ApiService {
     return response.json();
   }
 
-  // ========== LEARNING MATERIAL APIs với File Upload ==========
-
-  // ✅ CREATE với file upload - sử dụng LearningMaterialCreateRequestDTO
   async createLearningMaterial(
-    data: LearningMaterialCreateRequestDTO, // 👈 Dùng Create DTO (không có file field)
+    data: LearningMaterialCreateRequestDTO,
     file?: File
   ): Promise<LearningMaterialResponseDTO> {
     const formData = new FormData();
 
-    // Append JSON data - không cần remove file vì Create DTO không có file field
     formData.append("material", JSON.stringify(data));
 
-    // Append file if exists
     if (file) {
       formData.append("file", file);
     }
@@ -144,19 +137,16 @@ class ApiService {
     return this.courseMultipartRequest("/materials", formData, "POST");
   }
 
-  // ✅ UPDATE với file upload - sử dụng LearningMaterialRequestDTO
   async updateLearningMaterial(
     materialId: number,
-    data: LearningMaterialRequestDTO, // 👈 Dùng Request DTO (có file field)
+    data: LearningMaterialRequestDTO,
     file?: File
   ): Promise<LearningMaterialResponseDTO> {
     const formData = new FormData();
 
-    // Append JSON data - remove file field từ DTO
-    const { file: _, ...materialData } = data; // Remove file từ JSON
+    const { file: _, ...materialData } = data;
     formData.append("material", JSON.stringify(materialData));
 
-    // Append file if exists
     if (file) {
       formData.append("file", file);
     }
@@ -168,12 +158,10 @@ class ApiService {
     );
   }
 
-  // ✅ GET file download URL
   async getFileDownloadUrl(materialId: number): Promise<FileDownloadResponse> {
     return this.courseRequest(`/materials/${materialId}/download`);
   }
 
-  // CÁC METHOD KHÁC GIỮ NGUYÊN...
   async deleteLearningMaterial(materialId: number): Promise<void> {
     await this.courseRequest(`/materials/${materialId}`, {
       method: "DELETE",
@@ -191,8 +179,6 @@ class ApiService {
   ): Promise<LearningMaterialResponseDTO> {
     return this.courseRequest(`/materials/${materialId}`);
   }
-
-  // ========== CÁC APIs KHÁC GIỮ NGUYÊN ==========
 
   async getAllUsers(): Promise<UserDetail[]> {
     return this.identityRequest("/auth/users");

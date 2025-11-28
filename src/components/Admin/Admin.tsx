@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import type { UserDetail } from "../../types";
 import { apiService } from "../../services/apiService";
-import Sidebar from "../Sidebar/Sidebar"; // Import Sidebar component
+import Sidebar from "../Sidebar/Sidebar";
 import UserTableWrapper from "../UserTable/UserTableWrapper";
 import "./Admin.css";
 
