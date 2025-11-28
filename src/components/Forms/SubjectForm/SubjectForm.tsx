@@ -1,21 +1,14 @@
 // components/SubjectForm/SubjectForm.tsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./SubjectForm.css";
 import type { Subject } from "../../../types";
-import { useForm } from "../../../hooks/useForm";
 import { apiService } from "../../../services/apiService";
-import BaseModal from "../../Modal/BaseModal/BaseModal";
 
 interface SubjectFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSubjectCreated: () => void;
-  editingSubject?: Subject; // Thêm prop này
-}
-
-interface SubjectFormData {
-  name: string;
-  description: string;
+  editingSubject?: Subject;
 }
 
 const SubjectForm: React.FC<SubjectFormProps> = ({
@@ -24,135 +17,208 @@ const SubjectForm: React.FC<SubjectFormProps> = ({
   onSubjectCreated,
   editingSubject,
 }) => {
-  // Tạo initial values dựa trên editingSubject
-  const getInitialValues = (): SubjectFormData => {
-    if (editingSubject) {
-      // Edit mode - prefill với dữ liệu hiện tại
-      return {
-        name: editingSubject.name || "",
-        description: editingSubject.description || "",
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    duration: "",
+    level: "Beginner",
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (isOpen) {
+      if (editingSubject) {
+        setFormData({
+          name: editingSubject.name || "",
+          description: editingSubject.description || "",
+          duration: "",
+          level: "Beginner",
+        });
+      } else {
+        setFormData({
+          name: "",
+          description: "",
+          duration: "",
+          level: "Beginner",
+        });
+      }
+      setError("");
+    }
+  }, [isOpen, editingSubject]);
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const submitData = {
+        name: formData.name,
+        description: formData.description,
       };
-    } else {
-      // Create mode - giá trị mặc định
-      return {
-        name: "",
-        description: "",
-      };
+
+      if (editingSubject && editingSubject.subjectId) {
+        await apiService.updateSubject(editingSubject.subjectId, submitData);
+      } else {
+        await apiService.createSubject(submitData);
+      }
+
+      onSubjectCreated();
+      onClose();
+    } catch (err: any) {
+      setError(err.message || "Failed to save subject. Please try again.");
+      console.error("Failed to save subject:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const { values, errors, isLoading, handleChange, handleSubmit, reset } =
-    useForm<SubjectFormData>({
-      initialValues: getInitialValues(),
-      onSubmit: async (formData) => {
-        if (editingSubject && editingSubject.subjectId) {
-          // Edit mode - gọi API update
-          await apiService.updateSubject(editingSubject.subjectId, formData);
-        } else {
-          // Create mode - gọi API create
-          await apiService.createSubject(formData);
-        }
-        onSubjectCreated();
-        onClose();
-        reset(); // Reset về initialValues mặc định
-      },
-    });
-
-  // Reset form khi editingSubject thay đổi hoặc modal mở/đóng
-  useEffect(() => {
-    if (isOpen) {
-      const newInitialValues = getInitialValues();
-
-      // Manually set values bằng cách gọi handleChange cho từng field
-      Object.keys(newInitialValues).forEach((key) => {
-        const fieldName = key as keyof SubjectFormData;
-        const event = {
-          target: {
-            name: fieldName,
-            value: newInitialValues[fieldName],
-          },
-        } as React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
-
-        handleChange(fieldName)(event);
-      });
-    }
-  }, [editingSubject, isOpen]);
-
   const handleCancel = () => {
-    reset(); // Reset về initialValues mặc định
+    setFormData({
+      name: "",
+      description: "",
+      duration: "",
+      level: "Beginner",
+    });
+    setError("");
     onClose();
   };
 
-  // Xác định title và button text dựa trên mode
-  const modalTitle = editingSubject ? "Edit Course" : "Create New Course";
-  const submitButtonText = editingSubject ? "Update Course" : "Create Course";
-  const loadingText = editingSubject ? "Updating..." : "Creating...";
+  const overlayClass = isOpen ? "modal-overlay open" : "modal-overlay";
 
   return (
-    <BaseModal
-      isOpen={isOpen}
-      onClose={handleCancel}
-      title={modalTitle}
-      size="md"
-    >
-      <form onSubmit={handleSubmit} className="subject-form">
-        <div className="form-content">
-          <div className="form-group">
-            <label htmlFor="name" className="form-label">
-              Course Name *
-            </label>
-            <input
-              id="name"
-              type="text"
-              className="form-input"
-              value={values.name}
-              onChange={handleChange("name")}
-              placeholder="Enter subject name"
-              required
-            />
-            {errors.name && <div className="form-error">{errors.name}</div>}
+    <div className={overlayClass} onClick={handleCancel}>
+      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+        <form onSubmit={handleSubmit}>
+          <div className="modal-header">
+            <h2>{editingSubject ? "Edit Subject" : "Create New Subject"}</h2>
+            <button type="button" className="close-btn" onClick={handleCancel}>
+              <span className="material-symbols-outlined">close</span>
+            </button>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="description" className="form-label">
-              Description
-            </label>
-            <textarea
-              id="description"
-              className="form-textarea"
-              value={values.description}
-              onChange={handleChange("description")}
-              placeholder="Enter subject description"
-              rows={4}
-            />
-            {errors.description && (
-              <div className="form-error">{errors.description}</div>
-            )}
-          </div>
-        </div>
+          <div className="modal-body">
+            {error && <div className="form-error-message">{error}</div>}
 
-        <div className="form-actions">
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="cancel-btn"
-            disabled={isLoading}
-          >
-            Cancel
-          </button>
-          <button type="submit" className="submit-btn" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <span className="material-icons loading-spinner">refresh</span>
-                {loadingText}
-              </>
-            ) : (
-              submitButtonText
-            )}
-          </button>
-        </div>
-      </form>
-    </BaseModal>
+            <div className="form-group">
+              <label htmlFor="name">Subject Name *</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="e.g. Advanced Web Development"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="description">Description</label>
+              <textarea
+                id="description"
+                name="description"
+                rows={4}
+                placeholder="Describe what students will learn..."
+                value={formData.description}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Thumbnail Image</label>
+              <div className="upload-area">
+                <div className="upload-content">
+                  <div className="upload-icon-bg">
+                    <span
+                      title="cloud_upload"
+                      className="material-symbols-outlined"
+                      style={{ fontSize: "2rem" }}
+                    >
+                      cloud_upload
+                    </span>
+                  </div>
+                  <div className="upload-text">
+                    <label htmlFor="file-upload">Upload Image</label>
+                    <input
+                      title="cloud_upload"
+                      id="file-upload"
+                      name="file-upload"
+                      type="file"
+                      className="sr-only"
+                      style={{ display: "none" }}
+                    />
+                  </div>
+                  <p className="upload-hint">
+                    Drag and drop or click to browse
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="duration">Duration</label>
+                <input
+                  type="text"
+                  id="duration"
+                  name="duration"
+                  placeholder="e.g. 8 Weeks"
+                  value={formData.duration}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="level">Level</label>
+                <select
+                  id="level"
+                  name="level"
+                  value={formData.level}
+                  onChange={handleChange}
+                >
+                  <option value="Beginner">Beginner</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Advanced">Advanced</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="modal-footer">
+            <button
+              type="button"
+              className="btn-cancel"
+              onClick={handleCancel}
+              disabled={loading}
+            >
+              Cancel
+            </button>
+            <button type="submit" className="btn-submit" disabled={loading}>
+              <span className="material-symbols-outlined">
+                {editingSubject ? "save" : "add"}
+              </span>
+              <span>
+                {loading
+                  ? "Saving..."
+                  : editingSubject
+                  ? "Update Subject"
+                  : "Create Subject"}
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 
