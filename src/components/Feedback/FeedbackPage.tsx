@@ -163,19 +163,19 @@ const FeedbackPage: React.FC = () => {
           </div>
 
           <div className="feedback-stats-card">
-            <div className="stat-item">
+            <div className="stat-items">
               <span className="stat-number">{feedbacks.length}</span>
               <span className="stat-label">Total Feedbacks</span>
             </div>
             {averageRatings && (
               <>
-                <div className="stat-item">
+                <div className="stat-items">
                   <span className="stat-number">
                     {averageRatings.overall}/5
                   </span>
                   <span className="stat-label">Avg Rating</span>
                 </div>
-                <div className="stat-item">
+                <div className="stat-items">
                   <span className="stat-number">
                     {averageRatings.contentQuality}%
                   </span>
