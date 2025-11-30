@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import "./Register.css";
 
 const Register: React.FC = () => {
+  useEffect(() => {
+    document.title = "ITS - Register";
+    return () => {
+      document.title = "ITS  - Login";
+    };
+  }, []);
+
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
