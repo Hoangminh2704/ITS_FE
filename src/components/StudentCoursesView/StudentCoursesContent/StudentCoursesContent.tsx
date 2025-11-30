@@ -2,7 +2,10 @@
 import React, { useState, useEffect } from "react";
 import "./StudentCoursesContent.css";
 import type { StudentCoursesContentProps } from "../../../types/studentCoursesTypes";
-import type { LearningMaterialResponseDTO } from "../../../types";
+import type {
+  LearningMaterialResponseDTO,
+  FileDownloadResponse,
+} from "../../../types";
 import { apiService } from "../../../services/apiService";
 
 interface ExtendedStudentCoursesContentProps
@@ -20,11 +23,14 @@ const StudentCoursesContent: React.FC<ExtendedStudentCoursesContentProps> = ({
 }) => {
   const [activeMaterial, setActiveMaterial] =
     useState<LearningMaterialResponseDTO>();
+  const [fileUrl, setFileUrl] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [fileLoading, setFileLoading] = useState(false);
 
   const fetchMaterialData = async (materialId?: number) => {
     if (!materialId) {
       setActiveMaterial(undefined);
+      setFileUrl("");
       return;
     }
 
@@ -33,11 +39,52 @@ const StudentCoursesContent: React.FC<ExtendedStudentCoursesContentProps> = ({
       const material: LearningMaterialResponseDTO =
         await apiService.getMaterialById(materialId);
       setActiveMaterial(material);
+
+      // Fetch file download URL if material has a file
+      if (material.fileName) {
+        await fetchFileUrl(materialId);
+      }
     } catch (error) {
       console.error("Error fetching material:", error);
       setActiveMaterial(undefined);
+      setFileUrl("");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchFileUrl = async (materialId: number) => {
+    try {
+      setFileLoading(true);
+      const fileResponse: FileDownloadResponse =
+        await apiService.getFileDownloadUrl(materialId);
+      setFileUrl(fileResponse.downloadUrl || "");
+    } catch (error) {
+      console.error("Error fetching file URL:", error);
+      setFileUrl("");
+    } finally {
+      setFileLoading(false);
+    }
+  };
+
+  const handleDownloadFile = async () => {
+    if (!activeMaterial?.materialId) return;
+
+    try {
+      const fileResponse: FileDownloadResponse =
+        await apiService.getFileDownloadUrl(activeMaterial.materialId);
+
+      if (fileResponse.downloadUrl) {
+        // Tạo link tải xuống
+        const link = document.createElement("a");
+        link.href = fileResponse.downloadUrl;
+        link.download = activeMaterial.fileName || "download";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (error) {
+      console.error("Error downloading file:", error);
     }
   };
 
@@ -46,6 +93,7 @@ const StudentCoursesContent: React.FC<ExtendedStudentCoursesContentProps> = ({
       fetchMaterialData(activeLesson.materialId);
     } else {
       setActiveMaterial(undefined);
+      setFileUrl("");
     }
   }, [activeLesson]);
 
@@ -64,28 +112,44 @@ const StudentCoursesContent: React.FC<ExtendedStudentCoursesContentProps> = ({
 
   return (
     <section className="scv-content">
-      <div className="scv-video-wrapper">
-        {activeMaterial?.fileName ? (
-          <div className="scv-material-player">
-            {activeMaterial.type?.toLowerCase() === "video" ? (
-              <video controls className="scv-video">
-                <source
-                  src={`/api/materials/${activeMaterial.materialId}/file`}
-                  type="video/mp4"
-                />
-                Your browser does not support the video tag.
-              </video>
-            ) : (
-              <div className="scv-document-viewer">
-                <iframe
-                  src={`/api/materials/${activeMaterial.materialId}/file`}
-                  title={activeMaterial.title}
-                  className="scv-document-frame"
-                />
+      {/* File Display Section - Similar to FileUploadSection but read-only */}
+      {activeMaterial?.fileName && (
+        <div className="file-display-section">
+          <h3 className="editor-section-title">Learning Material</h3>
+
+          <div className="current-file-info">
+            <div className="file-info-header">
+              <span className="material-symbols-outlined">description</span>
+              <span>Current File</span>
+            </div>
+            <div className="file-details">
+              <div className="file-name">{activeMaterial.fileName}</div>
+              {activeMaterial.fileSize && (
+                <div className="file-size">
+                  {(activeMaterial.fileSize / 1024 / 1024).toFixed(2)} MB
+                </div>
+              )}
+              <div className="file-type">
+                Type: {activeMaterial.type || "Unknown"}
               </div>
-            )}
+            </div>
+            <div className="file-actions">
+              <button
+                className="btn btn-secondary btn-sm"
+                onClick={handleDownloadFile}
+                disabled={!activeMaterial.fileName}
+              >
+                <span className="material-symbols-outlined">download</span>
+                Download File
+              </button>
+            </div>
           </div>
-        ) : (
+        </div>
+      )}
+
+      {/* Default content when no material */}
+      {!activeMaterial?.fileName && (
+        <div className="scv-video-wrapper">
           <img
             alt={`Lesson content for ${
               activeLesson?.title || "current lesson"
@@ -93,20 +157,14 @@ const StudentCoursesContent: React.FC<ExtendedStudentCoursesContentProps> = ({
             className="scv-video"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPG3nIEZolvifVkXVAYEQvvcmfkWsS7AWvRupHKhZspfRW6w01SSOGdMpVBbj1OtBQcPdISOPB4dEJUactNOmSyhz7VNnCWhx1r9y_XB3lmq3GhBsdIUSin3Ki97hcd212LO0MyaQVRWALXzyXZsxH3aReWiNLfgJgMQkEMd6dJfLk2GxP8KzJ2vFwZBtc9lJZVun0_73KllhJIFsf0RwknWM6sPhZvVQwUbU64kBoycZH6widKZwlQB5yGhv7niYtqrFecgh8Rtbo"
           />
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="scv-tabs">
         <nav className="scv-tab-nav">
           <a className="scv-tab scv-tab-active" href="#">
             Overview
           </a>
-          <a className="scv-tab" href="#">
-            Resources
-          </a>
-          {/* <a className="scv-tab" href="#">
-            Discussion
-          </a> */}
           <a className="scv-tab" href="#" onClick={onFeedbackClick}>
             Feedback
           </a>
@@ -116,10 +174,7 @@ const StudentCoursesContent: React.FC<ExtendedStudentCoursesContentProps> = ({
       <div className="scv-tab-content">
         <article className="scv-article">
           <h2>{activeLesson?.title || "HTML Fundamentals"}</h2>
-          <p className="scv-subtitle">
-            {activeMaterial?.content ||
-              "Learn the building blocks of web development with HTML"}
-          </p>
+          <p className="scv-subtitle">{activeMaterial?.content}</p>
 
           {activeMaterial?.content ? (
             <div dangerouslySetInnerHTML={{ __html: activeMaterial.content }} />
