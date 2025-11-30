@@ -225,21 +225,36 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
               <label htmlFor="file" className="form-label">
                 File *
               </label>
-              <input
-                id="file"
-                type="file"
-                className="form-input"
-                onChange={handleFileChange}
-                accept=".pdf,.mp4,.mov,.avi,.doc,.docx,.ppt,.pptx"
-                required={!editingMaterial}
-              />
-              {selectedFile && (
-                <div className="file-info">
-                  <span className="material-icons">description</span>
-                  {selectedFile.name} (
-                  {(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
-                </div>
-              )}
+              <div className="file-upload-wrapper">
+                <input
+                  id="file"
+                  type="file"
+                  className="file-input-hidden"
+                  onChange={handleFileChange}
+                  accept=".pdf,.mp4,.mov,.avi,.doc,.docx,.ppt,.pptx"
+                  required={!editingMaterial}
+                />
+                <label htmlFor="file" className="file-upload-area">
+                  <div className="upload-icon">
+                    <span className="material-icons">cloud_upload</span>
+                  </div>
+                  <div className="upload-text">
+                    <p className="upload-title">Upload File</p>
+                    <p className="upload-subtitle">
+                      Drag and drop or click to browse
+                    </p>
+                  </div>
+                </label>
+                {selectedFile && (
+                  <div className="file-info">
+                    <span className="material-icons">description</span>
+                    <span className="file-name">{selectedFile.name}</span>
+                    <span className="file-size">
+                      ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
+                    </span>
+                  </div>
+                )}
+              </div>
               {fileError && <div className="form-error">{fileError}</div>}
             </div>
           )}
@@ -292,39 +307,41 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="type" className="form-label">
-              Material Type
-            </label>
-            <select
-              id="type"
-              className="form-select"
-              value={values.type}
-              onChange={handleChange("type")}
-            >
-              <option value="pdf">PDF</option>
-              <option value="video">Video</option>
-              <option value="article">Article</option>
-              <option value="presentation">Presentation</option>
-              <option value="exercise">Exercise</option>
-              <option value="quiz">Quiz</option>
-              <option value="link">External Link</option>
-            </select>
-          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="type" className="form-label">
+                Material Type
+              </label>
+              <select
+                id="type"
+                className="form-select"
+                value={values.type}
+                onChange={handleChange("type")}
+              >
+                <option value="pdf">PDF</option>
+                <option value="video">Video</option>
+                <option value="article">Article</option>
+                <option value="presentation">Presentation</option>
+                <option value="exercise">Exercise</option>
+                <option value="quiz">Quiz</option>
+                <option value="link">External Link</option>
+              </select>
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="duration" className="form-label">
-              Duration (minutes)
-            </label>
-            <input
-              id="duration"
-              type="number"
-              className="form-input"
-              value={values.duration}
-              onChange={handleChange("duration")}
-              placeholder="Enter estimated duration in minutes"
-              min="0"
-            />
+            <div className="form-group">
+              <label htmlFor="duration" className="form-label">
+                Duration (minutes)
+              </label>
+              <input
+                id="duration"
+                type="number"
+                className="form-input"
+                value={values.duration}
+                onChange={handleChange("duration")}
+                placeholder="Enter estimated duration in minutes"
+                min="0"
+              />
+            </div>
           </div>
 
           {editingMaterial && <input type="hidden" value={values.topicId} />}
