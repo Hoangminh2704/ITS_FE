@@ -35,6 +35,10 @@ const StudentSidebar: React.FC<StudentSidebarProps> = ({ onLogout, user }) => {
       </nav>
       <div className="sidebar-footer">
         <StudentProfile user={user} onLogout={onLogout} />
+        <button className="logout-btn" onClick={onLogout}>
+          <span className="material-symbols-outlined">logout</span>
+          Logout
+        </button>
       </div>
     </aside>
   );
