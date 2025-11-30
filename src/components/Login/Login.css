@@ -112,7 +112,7 @@
   z-index: 1;
 }
 
-.form-input {
+.login-form .form-input {
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 3rem;
   border: 1px solid #e5e7eb;
@@ -121,20 +121,16 @@
   transition: all 0.2s;
   background-color: white;
   box-sizing: border-box;
-}
-
-.login-form .form-input,
-.form-group .form-input {
   padding-left: 3rem !important;
 }
 
-.form-input:focus {
+.login-form .form-input:focus {
   outline: none;
   border-color: #4f46e5;
   box-shadow: 0 0 0 3px rgba(41, 40, 44, 0.1);
 }
 
-.form-input::placeholder {
+.login-form .form-input::placeholder {
   color: #9ca3af;
 }
 

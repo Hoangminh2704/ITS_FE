@@ -86,7 +86,7 @@ const Login: React.FC = () => {
                 mail_outline
               </span>
               <input
-                className="form-input"
+                className="form-input login"
                 id="email"
                 name="email"
                 placeholder="Enter your email"
@@ -107,7 +107,7 @@ const Login: React.FC = () => {
                 lock_outline
               </span>
               <input
-                className="form-input"
+                className="form-input login"
                 id="password"
                 name="password"
                 placeholder="Enter your password"
