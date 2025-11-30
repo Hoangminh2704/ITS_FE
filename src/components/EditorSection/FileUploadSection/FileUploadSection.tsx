@@ -53,18 +53,30 @@ const FileUploadSection: React.FC<FileUploadSectionProps> = ({
       )}
 
       {/* File upload/replace */}
-      <div className="file-upload-area">
-        <label className="form-label">
+      <div className="file-upload-area" id="file-upload">
+        {/* <label className="form-label">
           {hasExistingFile ? "Replace File" : "Upload File"}
           {selectedFile && " (New file selected)"}
-        </label>
+        </label> */}
+
         <input
           id="file-input"
           type="file"
-          className="file-input"
+          className="file-input-hidden"
           onChange={handleFileInputChange}
           accept=".pdf,.mp4,.mov,.avi,.doc,.docx,.ppt,.pptx,.txt,.md"
         />
+        <label htmlFor="file-input" className="file-upload-dropzone">
+          <div className="upload-icon">
+            <span className="material-symbols-outlined">cloud_upload</span>
+          </div>
+          <div className="upload-text">
+            <p className="upload-title">
+              {hasExistingFile ? "Replace File" : "Upload File"}
+            </p>
+            <p className="upload-subtitle">Drag and drop or click to browse</p>
+          </div>
+        </label>
 
         {selectedFile && (
           <div className="selected-file-info">
