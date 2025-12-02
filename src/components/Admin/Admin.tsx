@@ -4,8 +4,10 @@ import { apiService } from "../../services/apiService";
 import Sidebar from "../Sidebar/Sidebar";
 import UserTableWrapper from "../UserTable/UserTableWrapper";
 import "./Admin.css";
+import { useNavigate } from "react-router-dom";
 
 const Admin: React.FC = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("All Roles");
   const [users, setUsers] = useState<UserDetail[]>([]);
@@ -33,6 +35,9 @@ const Admin: React.FC = () => {
   const handleSidebarItemClick = (item: string) => {
     setActiveSidebarItem(item);
   };
+  const handleAddNewUser = () => {
+    navigate("/admin/create-account");
+  };
 
   return (
     <div className="admin-layout">
@@ -48,7 +53,7 @@ const Admin: React.FC = () => {
             <h2 className="content-title">User Management</h2>
             <p className="content-subtitle">Manage all users in the system</p>
           </div>
-          <button className="add-user-btn">
+          <button className="add-user-btn" onClick={handleAddNewUser}>
             <span className="material-icons">add</span>
             <span>Add New User</span>
           </button>

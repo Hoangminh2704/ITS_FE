@@ -9,9 +9,9 @@ import { AuthProvider } from "./contexts/AuthContext";
 import InstructorDashboard from "./components/InstructorDashboard/InstructorDashboard";
 import StudentDashboard from "./pages/StudentDashboard/StudentDashboard";
 import StudentCoursesView from "./pages/StudentCoursesView/StudentCoursesView";
-import Register from "./pages/Register/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
 import FeedbackPage from "./components/Feedback/FeedbackPage";
+import CreateAccount from "./pages/Register/Register";
 
 function App() {
   return (
@@ -19,7 +19,14 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route
+            path="/admin/create-account"
+            element={
+              <ProtectedRoute requiredRole="Admin">
+                <CreateAccount />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/admin"
             element={

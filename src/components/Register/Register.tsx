@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import "./Register.css";
+import { useNavigate } from "react-router-dom";
 
-const Register: React.FC = () => {
+const CreateAccount: React.FC = () => {
   useEffect(() => {
-    document.title = "ITS - Register";
+    document.title = "ITS - Create New Account";
     return () => {
-      document.title = "ITS  - Login";
+      document.title = "ITS";
     };
   }, []);
-
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +20,7 @@ const Register: React.FC = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
-
+  const [success, setSuccess] = useState(false);
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -40,8 +41,17 @@ const Register: React.FC = () => {
       const role = isTeacher ? "TEACHER" : "STUDENT";
       const success = await register(email, password, name, role);
 
-      if (!success) {
-        setError("Registration failed. Please try again.");
+      if (success) {
+        setSuccess(true);
+        setEmail("");
+        setPassword("");
+        setName("");
+        setIsTeacher(false);
+        setTimeout(() => {
+          navigate("/admin");
+        }, 2000);
+      } else {
+        setError("Failed to create user. Please try again.");
       }
     } catch (err: any) {
       setError(err.message || "Registration failed");
@@ -50,6 +60,9 @@ const Register: React.FC = () => {
     }
   };
 
+  const handleBack = () => {
+    navigate("/admin");
+  };
   return (
     <div className="register-container">
       <div className="register-card">
@@ -63,14 +76,52 @@ const Register: React.FC = () => {
             </span>
           </div>
           <h1 className="logo-title">Intelligent Tutoring System</h1>
-          <p className="logo-subtitle">Smart learning platform</p>
+          <p className="logo-subtitle">Admin - Create New User</p>
         </div>
 
-        <div className="welcome-header">
-          <h2 className="welcome-title">Register to ITS</h2>
-          <p className="welcome-subtitle">
-            Welcome to ITS! Please create account to start learning.
-          </p>
+        <div
+          className="welcome-header"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+            marginBottom: "1rem",
+          }}
+        >
+          <button
+            type="button"
+            onClick={handleBack}
+            style={{
+              backgroundColor: "transparent",
+              border: "none",
+              color: "#3346c8",
+              cursor: "pointer",
+              position: "absolute",
+              left: "0",
+              padding: "8px",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.2s",
+            }}
+            disabled={loading}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#f3f4f6";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "transparent";
+            }}
+          >
+            <span
+              className="material-icons-outlined"
+              style={{ fontSize: "24px" }}
+            >
+              arrow_back
+            </span>
+          </button>
+          <h2 className="welcome-title">Create New User</h2>
         </div>
 
         <div className="demo-info">
@@ -90,6 +141,22 @@ const Register: React.FC = () => {
             <span>student@its.edu / password123</span>
           </div>
         </div>
+        {success && (
+          <div
+            className="success-message"
+            style={{
+              backgroundColor: "#d4edda",
+              color: "#155724",
+              padding: "12px",
+              borderRadius: "4px",
+              marginBottom: "20px",
+              border: "1px solid #c3e6cb",
+              textAlign: "center",
+            }}
+          >
+            User created successfully! Redirecting to admin page...
+          </div>
+        )}
 
         {error && <div className="error-message">{error}</div>}
 
@@ -111,6 +178,7 @@ const Register: React.FC = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
+                disabled={success}
               />
             </div>
           </div>
@@ -131,6 +199,7 @@ const Register: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={success}
               />
             </div>
           </div>
@@ -152,6 +221,7 @@ const Register: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={success}
               />
               <button
                 type="button"
@@ -166,7 +236,7 @@ const Register: React.FC = () => {
           </div>
 
           <div className="role-selection">
-            <p className="role-label">Register as:</p>
+            <p className="role-label">Create account for:</p>
             <div className="role-options">
               <div className="role-option">
                 <input
@@ -176,6 +246,7 @@ const Register: React.FC = () => {
                   type="radio"
                   checked={!isTeacher}
                   onChange={() => setIsTeacher(false)}
+                  disabled={success}
                 />
                 <label className="role-option-label" htmlFor="student">
                   Student
@@ -189,6 +260,7 @@ const Register: React.FC = () => {
                   type="radio"
                   checked={isTeacher}
                   onChange={() => setIsTeacher(true)}
+                  disabled={success}
                 />
                 <label className="role-option-label" htmlFor="teacher">
                   Teacher
@@ -213,18 +285,18 @@ const Register: React.FC = () => {
 
           <div>
             <button className="submit-btn" type="submit" disabled={loading}>
-              {loading ? "Logging in..." : "register"}
+              {loading ? "Creating..." : "Create new account"}
             </button>
           </div>
         </form>
 
         {/* Forgot Password Link */}
-        <div className="have-account">
+        {/* <div className="have-account">
           <a href="/login">Already have an account? Login</a>
-        </div>
+        </div> */}
       </div>
     </div>
   );
 };
 
-export default Register;
+export default CreateAccount;

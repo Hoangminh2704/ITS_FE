@@ -148,12 +148,12 @@ const Login: React.FC = () => {
         </form>
 
         {/* Forgot Password Link */}
-        <div className="forgot-password">
+        {/* <div className="forgot-password">
           <a href="#">Forgot password?</a>
         </div>
         <div className="create-account">
           <a href="/register">Create new account.</a>
-        </div>
+        </div> */}
       </div>
     </div>
   );
