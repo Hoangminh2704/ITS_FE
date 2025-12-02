@@ -174,7 +174,7 @@ const StudentCoursesContent: React.FC<ExtendedStudentCoursesContentProps> = ({
       <div className="scv-tab-content">
         <article className="scv-article">
           <h2>{activeLesson?.title || "HTML Fundamentals"}</h2>
-          <p className="scv-subtitle">{activeMaterial?.content}</p>
+          {/* <p className="scv-subtitle">{activeMaterial?.content}</p> */}
 
           {activeMaterial?.content ? (
             <div dangerouslySetInnerHTML={{ __html: activeMaterial.content }} />
