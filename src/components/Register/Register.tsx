@@ -30,34 +30,30 @@ const CreateAccount: React.FC = () => {
     setError("");
     setLoading(true);
 
-    // Basic validation
     if (password.length <= 6) {
-      setError("Password must greater than 6 characters long");
+      setError("Password must be greater than 6 characters long");
       setLoading(false);
       return;
     }
 
-    try {
-      const role = isTeacher ? "TEACHER" : "STUDENT";
-      const success = await register(email, password, name, role);
+    const role = isTeacher ? "TEACHER" : "STUDENT";
+    const success = await register(email, password, name, role);
 
-      if (success) {
-        setSuccess(true);
-        setEmail("");
-        setPassword("");
-        setName("");
-        setIsTeacher(false);
-        setTimeout(() => {
-          navigate("/admin");
-        }, 2000);
-      } else {
-        setError("Failed to create user. Please try again.");
-      }
-    } catch (err: any) {
-      setError(err.message || "Registration failed");
-    } finally {
-      setLoading(false);
+    if (success) {
+      setSuccess(true);
+      setEmail("");
+      setPassword("");
+      setName("");
+      setIsTeacher(false);
+
+      setTimeout(() => {
+        navigate("/admin");
+      }, 2000);
+    } else {
+      setError("Failed to create user. Please try again.");
     }
+
+    setLoading(false);
   };
 
   const handleBack = () => {

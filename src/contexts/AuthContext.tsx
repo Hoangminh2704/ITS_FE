@@ -174,12 +174,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     role: string
   ): Promise<boolean> => {
     try {
+      const token = localStorage.getItem("its_token");
+      if (!token) {
+        throw new Error("Authentication required. Please login again.");
+      }
       const response = await fetch(
         `${IDENTITY_SERVICE_API_URL}/api/v1/register`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             email,
