@@ -4,7 +4,7 @@ import "./Login.css";
 
 const Login: React.FC = () => {
   useEffect(() => {
-    document.title = "ITS - Login";
+    document.title = "ITS";
   }, []);
 
   const [showPassword, setShowPassword] = useState(false);

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const CreateAccount: React.FC = () => {
   useEffect(() => {
-    document.title = "ITS - Create New Account";
+    document.title = "ITS";
     return () => {
       document.title = "ITS";
     };
